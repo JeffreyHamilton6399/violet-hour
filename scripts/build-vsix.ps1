@@ -122,30 +122,40 @@ Step 4 'Converting theme JSON to .pkgdef'
 New-Item -ItemType Directory -Force -Path $BuildDir | Out-Null
 
 # ThemeConverter takes the theme's DISPLAY NAME from the input filename, not
-# from the "name" field in the JSON. Stage a correctly-named copy so the theme
-# shows up as "Violet Hour" under Tools > Theme rather than "VioletHour".
+# from the "name" field in the JSON, so each variant is staged under the name it
+# should show as under Tools > Theme.
+$variants = @(
+    @{ Json = 'theme\VioletHour.json';       Name = 'Violet Hour';       Pkgdef = 'VioletHour.pkgdef' },
+    @{ Json = 'theme\VioletHour-Light.json'; Name = 'Violet Hour Light'; Pkgdef = 'VioletHour-Light.pkgdef' }
+)
+
 $Staged = Join-Path ([System.IO.Path]::GetTempPath()) 'VioletHourStage'
-New-Item -ItemType Directory -Force -Path $Staged | Out-Null
-$StagedJson = Join-Path $Staged 'Violet Hour.json'
-Copy-Item $ThemeJson $StagedJson -Force
-
-Push-Location $ConvOut
-try   { & $ConvExe @ConvArgs -i $StagedJson -o $Staged }
-finally { Pop-Location }
-if ($LASTEXITCODE -ne 0) { throw 'ThemeConverter failed.' }
-
-$Raw = Join-Path $Staged 'Violet Hour.pkgdef'
-if (-not (Test-Path $Raw)) { throw "ThemeConverter produced no .pkgdef in $Staged." }
-
-# Pin the theme GUID: the converter stamps a fresh Guid.NewGuid() every run, so
-# without this each rebuild registers as a whole new theme in VS.
-Step 5 'Finalizing .pkgdef (pin GUID, verify name)'
-$Pkgdef = Join-Path $BuildDir 'VioletHour.pkgdef'
-& node (Join-Path $Root 'scripts\finalize-pkgdef.js') $Raw $Pkgdef
-if ($LASTEXITCODE -ne 0) { throw 'finalize-pkgdef.js failed.' }
-
 Remove-Item $Staged -Recurse -Force -ErrorAction SilentlyContinue
-Copy-Item $Pkgdef (Join-Path $VsixDir 'VioletHour.pkgdef') -Force
+New-Item -ItemType Directory -Force -Path $Staged | Out-Null
+
+foreach ($v in $variants) {
+    $src = Join-Path $Root $v.Json
+    if (-not (Test-Path $src)) { throw "$($v.Json) is missing. Run `npm run build` first." }
+    $StagedJson = Join-Path $Staged "$($v.Name).json"
+    Copy-Item $src $StagedJson -Force
+
+    Push-Location $ConvOut
+    try   { & $ConvExe @ConvArgs -i $StagedJson -o $Staged }
+    finally { Pop-Location }
+    if ($LASTEXITCODE -ne 0) { throw "ThemeConverter failed for $($v.Name)." }
+
+    $Raw = Join-Path $Staged "$($v.Name).pkgdef"
+    if (-not (Test-Path $Raw)) { throw "ThemeConverter produced no .pkgdef for $($v.Name)." }
+
+    # Pin the theme GUID: the converter stamps a fresh Guid.NewGuid() every run,
+    # so without this each rebuild registers as a whole new theme.
+    $Pkgdef = Join-Path $BuildDir $v.Pkgdef
+    Write-Host "`n  finalizing $($v.Name)" -ForegroundColor Cyan
+    & node (Join-Path $Root 'scripts\finalize-pkgdef.js') $Raw $Pkgdef $v.Name
+    if ($LASTEXITCODE -ne 0) { throw "finalize-pkgdef.js failed for $($v.Name)." }
+    Copy-Item $Pkgdef (Join-Path $VsixDir $v.Pkgdef) -Force
+}
+Remove-Item $Staged -Recurse -Force -ErrorAction SilentlyContinue
 
 # ------------------------------------------------------------------ 5: the VSIX
 Step 6 'Packaging the VSIX'

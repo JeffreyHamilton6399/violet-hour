@@ -38,6 +38,10 @@
       <IncludeInVSIX>true</IncludeInVSIX>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="VioletHour-Light.pkgdef">
+      <IncludeInVSIX>true</IncludeInVSIX>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="LICENSE.txt">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
@@ -60,5 +64,7 @@
   <Target Name="VerifyPkgdefPresent" BeforeTargets="Build">
     <Error Condition="!Exists('$(MSBuildProjectDirectory)\VioletHour.pkgdef')"
            Text="VioletHour.pkgdef is missing. Run scripts/build-vsix.ps1, which generates it with ThemeConverter and copies it here." />
+    <Error Condition="!Exists('$(MSBuildProjectDirectory)\VioletHour-Light.pkgdef')"
+           Text="VioletHour-Light.pkgdef is missing. Run scripts/build-vsix.ps1." />
   </Target>
 </Project>

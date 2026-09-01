@@ -19,14 +19,19 @@
 'use strict';
 const fs = require('fs');
 
-// Generated once for this theme. Must never change across releases -- VS keys
-// the installed theme off it.
-const THEME_GUID = '{8c74cad4-6a89-4e18-b8cf-bd329c407c61}';
-const THEME_NAME = 'Violet Hour';
+// Generated once per theme. Must never change across releases -- VS keys the
+// installed theme off it, and a new GUID registers a whole new theme.
+const GUIDS = {
+  'Violet Hour':       '{8c74cad4-6a89-4e18-b8cf-bd329c407c61}',
+  'Violet Hour Light': '{2c02cce2-3694-4786-8593-c87d444dec0f}',
+};
 
-const [, , inPath, outPath] = process.argv;
-if (!inPath || !outPath) {
-  console.error('usage: node scripts/finalize-pkgdef.js <input.pkgdef> <output.pkgdef>');
+const [, , inPath, outPath, nameArg] = process.argv;
+const THEME_NAME = nameArg || 'Violet Hour';
+const THEME_GUID = GUIDS[THEME_NAME];
+if (!inPath || !outPath || !THEME_GUID) {
+  console.error('usage: node scripts/finalize-pkgdef.js <input.pkgdef> <output.pkgdef> [theme name]');
+  console.error('known themes: ' + Object.keys(GUIDS).join(', '));
   process.exit(2);
 }
 

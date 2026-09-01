@@ -1,7 +1,7 @@
 # Violet Hour
 
-A deep violet color theme for **Visual Studio 2022** and **VS Code**, tuned for JavaScript,
-TypeScript, JSX/TSX and CSS.
+A violet color theme for **Visual Studio 2022** and **VS Code**, in **dark and light**, tuned for
+JavaScript, TypeScript, JSX/TSX and CSS.
 
 Named for the half-hour after sunset. A violet field, cool sky colors carrying the structure of the
 code, and the last warm light of the day on strings and numbers. Italic comments, keywords and
@@ -16,6 +16,10 @@ build refuses to ship a palette that violates them.
 
 ![HTML and CSS](https://raw.githubusercontent.com/JeffreyHamilton6399/violet-hour/main/preview-markup.png)
 
+**Violet Hour Light** — the same hue plan solved against a bright ground:
+
+![Violet Hour Light](https://raw.githubusercontent.com/JeffreyHamilton6399/violet-hour/main/preview-light.png)
+
 *Regenerate with `npm run preview` (and `npm run preview:markup`). Both render straight from
 `palette.json` through GDI+ with a real monospace face, so they cannot drift from what ships.*
 
@@ -27,7 +31,7 @@ Grab the latest from the **[Releases](../../releases)** page:
 
 | File | For | How |
 |---|---|---|
-| `VioletHour.vsix` | Visual Studio 2022 | double-click, restart VS, then **Tools → Theme → Violet Hour** |
+| `VioletHour.vsix` | Visual Studio 2022 | double-click, restart VS, then **Tools → Theme → Violet Hour** (or **Violet Hour Light**) |
 | `VioletHour-VSCode.vsix` | VS Code | `code --install-extension VioletHour-VSCode.vsix`, or Extensions → `...` → *Install from VSIX* |
 | `VioletHour.pkgdef` | VS 2022, manual | drop straight into a VS install (see [Without a VSIX](#without-a-vsix)) |
 
@@ -73,9 +77,24 @@ like a manifest error but is not.
 Until any of that happens, the `.vsix` files on the [Releases](../../releases) page install exactly
 the same theme — they just are not searchable.
 
-## The palette
+## The palettes
 
-Everything lives in `theme/palette.json`. Nothing else holds a literal hex.
+Two variants, one hue plan. `theme/palette.dark.json` and `theme/palette.light.json` are the only
+places a literal hex lives.
+
+**The light variant is not the dark one inverted.** Three constraints genuinely flip, and getting
+any of them wrong is what makes most light themes feel washed out:
+
+- The neutral ramp **descends** from the editor rather than climbing.
+- Edges are solved against the **darkest** adjacent surface, not the lightest — a border that clears
+  1.66:1 against the light editor still vanishes on chrome.
+- The luminance rule becomes a **floor** instead of a ceiling: nothing may be *darker* than the body
+  text, or it out-weights the prose.
+
+The selection background is also the binding constraint on light, not the editor — every token has
+to stay dark enough to clear 4.0:1 when selected. Both variants pass the same 113 assertions.
+
+### Dark
 
 **Neutrals** — hue held at 267, saturation eased from 0.34 down to 0.25 as surfaces lighten so the
 chrome never turns lurid. Never gray, never black.
@@ -128,7 +147,7 @@ from "added" from 1.14 to 1.48.
 
 ### Tweaking a color
 
-1. Edit the hex in `theme/palette.json`.
+1. Edit the hex in `theme/palette.dark.json` or `theme/palette.light.json`.
 2. `npm run build`.
 3. Read the report. A failed assertion names the exact pair and the floor it missed.
 
@@ -210,7 +229,7 @@ reference for what "complete" means. `build-theme.js` assigns a palette color to
 ### Building it yourself
 
 ```powershell
-npm run build      # theme JSON + contrast report
+npm run build      # both variants + contrast report for each
 npm run vsix       # full chain through to VioletHour.vsix  (needs .NET SDK + VS 2022)
 npm run vscode     # package + install the VS Code extension
 ```
@@ -278,10 +297,12 @@ Nothing should render as unstyled default-foreground text.
 ```
 violet-hour/
   theme/
-    palette.json          the one place colors are defined
+    palette.dark.json     the one place dark colors are defined
+    palette.light.json    ... and light
     VioletHour.json       generated - complete VS Code theme JSON
+    VioletHour-Light.json generated
   scripts/
-    build-theme.js        palette -> VioletHour.json (fails if any key is unassigned)
+    build-theme.js        palette -> theme JSON, both variants (fails if any key is unassigned)
     contrast-check.js     verification + printed report
     finalize-pkgdef.js    pins the theme GUID, verifies the display name
     build-vsix.ps1        full chain: theme -> check -> pkgdef -> vsix

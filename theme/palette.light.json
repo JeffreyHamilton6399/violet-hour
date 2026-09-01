@@ -1,0 +1,73 @@
+{
+  "$comment": "Violet Hour Light palette -- the ONE place light colors are defined. Edit a hex, then `npm run build`. Solved against the same contrast budget as the dark variant; see scripts/contrast-check.js.",
+  "$design": {
+    "concept": "The violet hour seen from the other side: dawn rather than dusk. An off-white ground with a violet cast (never #FFFFFF, which glares), the same hue plan as the dark variant, every colour darkened until it clears the budget on a bright ground.",
+    "notLightenedDark": "A light theme is not an inverted dark theme. The binding constraints flip: the neutral ramp DESCENDS from the editor, edges are solved against the DARKEST adjacent surface rather than the lightest, and the luminance rule becomes a floor - nothing may be lighter than the body text.",
+    "hues": {
+      "neutrals": "261-272 violet, saturation eased from 0.34 down to 0.25 as surfaces lighten so chrome never turns lurid",
+      "identity": "262 lavender -- accent, focus, links, function names",
+      "grammar": "332 rose -- keywords, storage, decorators",
+      "lowSun": "14 coral (numbers), 33 orange (warnings), 40 amber (strings), 46 gold (markup tags)",
+      "coolSky": "136 green (regex, attributes), 156 mint (template punctuation), 172 aqua (types AND intrinsic tags - deliberately one colour, an intrinsic element is a type-like thing), 206 sky (properties, git-modified)",
+      "cssPlan": "selector 46 gold, property 206 sky, value-keyword 156 mint, unit/number 14 coral - four well-separated hues, so no two frequent CSS tokens blur"
+    }
+  },
+  "neutral": {
+    "well": "#EEE9F3",
+    "editorBg": "#F9F6FB",
+    "panelBg": "#F0EBF5",
+    "chromeBg": "#E7E1F0",
+    "hoverBg": "#E0D5ED",
+    "selectionBg": "#E3D4F5",
+    "inactiveSelBg": "#ECE3F6",
+    "border": "#BFA8DC",
+    "indentGuide": "#C5B2DB",
+    "indentGuideActive": "#A27FCD",
+    "scrollSlider": "#C4B2D9",
+    "scrollSliderHover": "#AF93D1",
+    "scrollSliderActive": "#9C74CC"
+  },
+  "fg": {
+    "primary": "#3E2455",
+    "secondary": "#634285",
+    "muted": "#8364A8",
+    "mutedOnChrome": "#7E5DA4"
+  },
+  "state": {
+    "accent": "#692BD4",
+    "cursor": "#A821BC",
+    "findMatchBg": "#E7D0F7",
+    "findOtherBg": "#F0E2F8",
+    "error": "#A01C25",
+    "warning": "#AD681A",
+    "info": "#215CA0",
+    "gitAdded": "#1D8C42",
+    "gitRemoved": "#A01C25",
+    "gitModified": "#2569B6"
+  },
+  "syntax": {
+    "comment": "#9472B3",
+    "keyword": "#B42567",
+    "operator": "#AC3480",
+    "string": "#955516",
+    "templatePunct": "#1A6E4D",
+    "number": "#A93423",
+    "function": "#692BD4",
+    "type": "#166972",
+    "variable": "#3E2455",
+    "parameter": "#8B5841",
+    "property": "#215CA0",
+    "punctuation": "#7358A3",
+    "decorator": "#B42567",
+    "regex": "#1B7238",
+    "tagIntrinsic": "#166972",
+    "tagComponent": "#825E15",
+    "attribute": "#1B7238",
+    "cssSelector": "#825E15",
+    "cssProperty": "#215CA0",
+    "cssValue": "#1A6E4D",
+    "cssUnit": "#A93423",
+    "invalid": "#C2222D",
+    "deprecated": "#7358A3"
+  }
+}

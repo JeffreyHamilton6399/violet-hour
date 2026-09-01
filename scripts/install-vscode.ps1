@@ -37,7 +37,8 @@ param(
 
 $ErrorActionPreference = 'Stop'
 $Root      = Split-Path -Parent $PSScriptRoot
-$ThemeJson = Join-Path $Root 'theme\VioletHour.json'
+$ThemeJson  = Join-Path $Root 'theme\VioletHour.json'
+$ThemeLight = Join-Path $Root 'theme\VioletHour-Light.json'
 $ExtId     = 'jeffreyhamilton.violet-hour'
 
 # ------------------------------------------------------------- locate code CLI
@@ -83,7 +84,9 @@ if ($Uninstall) {
 }
 
 # -------------------------------------------------------------- sanity checks
-if (-not (Test-Path $ThemeJson)) { throw 'theme\VioletHour.json is missing. Run `npm run build` first.' }
+foreach ($t in @($ThemeJson, $ThemeLight)) {
+    if (-not (Test-Path $t)) { throw "$t is missing. Run ``npm run build`` first." }
+}
 $theme = Get-Content $ThemeJson -Raw | ConvertFrom-Json
 $colorCount = ($theme.colors | Get-Member -MemberType NoteProperty).Count
 if ($colorCount -lt 500) { throw "theme\VioletHour.json looks incomplete ($colorCount colors). Run `npm run build`." }
@@ -95,7 +98,8 @@ $ExtDir = Join-Path $Stage 'extension'
 New-Item -ItemType Directory -Force -Path (Join-Path $ExtDir 'themes') | Out-Null
 
 Copy-Item (Join-Path $Root 'vscode\package.json') (Join-Path $ExtDir 'package.json') -Force
-Copy-Item $ThemeJson (Join-Path $ExtDir 'themes\VioletHour.json') -Force
+Copy-Item $ThemeJson  (Join-Path $ExtDir 'themes\VioletHour.json') -Force
+Copy-Item $ThemeLight (Join-Path $ExtDir 'themes\VioletHour-Light.json') -Force
 Copy-Item (Join-Path $Root 'LICENSE.txt') (Join-Path $ExtDir 'LICENSE.txt') -Force
 
 Copy-Item (Join-Path $Root 'vscode\icon.png')   (Join-Path $ExtDir 'icon.png') -Force
@@ -110,7 +114,7 @@ Copy-Item -LiteralPath (Join-Path $Root 'vscode\[Content_Types].xml') `
           -Destination (Join-Path $Stage '[Content_Types].xml') -Force
 
 # ------------------------------------------------------------------- zip it up
-$Vsix = Join-Path $Root 'vscode\violet-hour-2.2.0.vsix'
+$Vsix = Join-Path $Root 'vscode\violet-hour-2.3.0.vsix'
 & (Join-Path $PSScriptRoot 'make-vsix-zip.ps1') -Source $Stage -Destination $Vsix
 
 Remove-Item $Stage -Recurse -Force -ErrorAction SilentlyContinue

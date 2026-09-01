@@ -13,13 +13,32 @@
  * whole point: an omitted key converts to a bad fallback, not a sane default.
  *
  * The build FAILS if any baseline key is left unassigned.
+ *
+ * Usage:
+ *   node scripts/build-theme.js                       both variants
+ *   node scripts/build-theme.js --variant light       just one
  */
 'use strict';
 const fs = require('fs');
 const path = require('path');
 
 const ROOT = path.join(__dirname, '..');
-const P = JSON.parse(fs.readFileSync(path.join(ROOT, 'theme/palette.json'), 'utf8'));
+
+const VARIANTS = {
+  dark:  { palette: 'theme/palette.dark.json',  out: 'theme/VioletHour.json',       name: 'Violet Hour',       type: 'dark'  },
+  light: { palette: 'theme/palette.light.json', out: 'theme/VioletHour-Light.json', name: 'Violet Hour Light', type: 'light' },
+};
+
+const argIdx = process.argv.indexOf('--variant');
+const wanted = argIdx > -1 ? [process.argv[argIdx + 1]] : Object.keys(VARIANTS);
+for (const w of wanted) {
+  if (!VARIANTS[w]) { console.error(`unknown variant: ${w}`); process.exit(2); }
+}
+
+for (const key of wanted) build(VARIANTS[key]);
+
+function build(V) {
+const P = JSON.parse(fs.readFileSync(path.join(ROOT, V.palette), 'utf8'));
 const BASELINE = JSON.parse(fs.readFileSync(path.join(__dirname, 'baseline-keys.json'), 'utf8'));
 
 const N = P.neutral, F = P.fg, S = P.state, X = P.syntax;
@@ -941,17 +960,18 @@ for (const k of required) colors[k] = c[k];
 for (const k of extra) colors[k] = c[k];
 
 const theme = {
-  name: 'Violet Hour',
-  type: 'dark',
+  name: V.name,
+  type: V.type,
   semanticHighlighting: true,
   colors,
   semanticTokenColors,
   tokenColors,
 };
 
-fs.writeFileSync(path.join(ROOT, 'theme/VioletHour.json'), JSON.stringify(theme, null, 2) + '\n');
+fs.writeFileSync(path.join(ROOT, V.out), JSON.stringify(theme, null, 2) + '\n');
 
-console.log('Violet Hour built -> theme/VioletHour.json');
+console.log(`${V.name} built -> ${V.out}`);
 console.log(`  workbench colors : ${Object.keys(colors).length} (${required.length} required, ${extra.length} extra)`);
 console.log(`  tokenColors      : ${tokenColors.length} rules, ${tokenColors.reduce((n, r) => n + r.scope.length, 0)} scopes`);
 console.log(`  semantic tokens  : ${Object.keys(semanticTokenColors).length}`);
+}

@@ -22,7 +22,8 @@ param(
     # tsx    - TypeScript + JSX
     # markup - HTML, CSS and JSON, where tags, attributes and strings collide
     #          most densely and are easiest to get wrong
-    [ValidateSet('tsx', 'markup')][string]$Sample = 'tsx'
+    [ValidateSet('tsx', 'markup')][string]$Sample = 'tsx',
+    [ValidateSet('dark', 'light')][string]$Variant = 'dark'
 )
 
 $ErrorActionPreference = 'Stop'
@@ -31,10 +32,11 @@ Add-Type -AssemblyName System.Drawing
 # $PSScriptRoot is not populated inside a param default block, so resolve here.
 $Root = Split-Path -Parent $PSScriptRoot
 if (-not $Out) {
-    $name = if ($Sample -eq 'tsx') { 'preview.png' } else { "preview-$Sample.png" }
+    $stem = if ($Variant -eq 'dark') { 'preview' } else { "preview-$Variant" }
+    $name = if ($Sample -eq 'tsx') { "$stem.png" } else { "$stem-$Sample.png" }
     $Out = Join-Path $Root $name
 }
-$P = Get-Content (Join-Path $Root 'theme/palette.json') -Raw | ConvertFrom-Json
+$P = Get-Content (Join-Path $Root "theme/palette.$Variant.json") -Raw | ConvertFrom-Json
 $N = $P.neutral; $F = $P.fg; $S = $P.state; $X = $P.syntax
 
 function C([string]$hex) {

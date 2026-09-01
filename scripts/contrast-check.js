@@ -9,15 +9,32 @@
  *   node scripts/build-theme.js && node scripts/contrast-check.js
  *
  * Exits non-zero if any assertion fails.
+ *
+ * Usage:
+ *   node scripts/contrast-check.js                  both variants
+ *   node scripts/contrast-check.js --variant light  just one
  */
 'use strict';
 const fs = require('fs');
 const path = require('path');
 
 const ROOT = path.join(__dirname, '..');
-const P = JSON.parse(fs.readFileSync(path.join(ROOT, 'theme/palette.json'), 'utf8'));
-const T = JSON.parse(fs.readFileSync(path.join(ROOT, 'theme/VioletHour.json'), 'utf8'));
+const VARIANTS = {
+  dark:  { palette: 'theme/palette.dark.json',  theme: 'theme/VioletHour.json' },
+  light: { palette: 'theme/palette.light.json', theme: 'theme/VioletHour-Light.json' },
+};
+const argIdx = process.argv.indexOf('--variant');
+const wanted = argIdx > -1 ? [process.argv[argIdx + 1]] : Object.keys(VARIANTS);
+
+let grandFail = 0, grandTotal = 0;
+for (const key of wanted) { audit(key, VARIANTS[key]); }
+process.exit(grandFail ? 1 : 0);
+
+function audit(variantName, V) {
+const P = JSON.parse(fs.readFileSync(path.join(ROOT, V.palette), 'utf8'));
+const T = JSON.parse(fs.readFileSync(path.join(ROOT, V.theme), 'utf8'));
 const N = P.neutral, F = P.fg, S = P.state, X = P.syntax;
+const isLight = T.type === 'light';
 
 // ------------------------------------------------------------------ color math
 const rgb = h => [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16) / 255);
@@ -211,13 +228,18 @@ for (const k of fgKeys) allFg.set(T.colors[k], k);
 for (const r of T.tokenColors) allFg.set(r.settings.foreground, `tokenColors: ${r.name}`);
 for (const [k, v] of Object.entries(T.semanticTokenColors)) allFg.set(v.foreground, `semantic: ${k}`);
 
-const tooBright = [];
+// On a dark theme nothing may out-shine the body text; on a light theme the
+// rule inverts - nothing may be DARKER than it, or it out-weights the prose.
+const offenders = [];
 for (const [color, where] of allFg) {
-  if (lum(color) > LUM_CAP + 1e-9) tooBright.push(`${color} (${where})`);
+  const bad = isLight ? lum(color) < LUM_CAP - 1e-9 : lum(color) > LUM_CAP + 1e-9;
+  if (bad) offenders.push(`${color} (${where})`);
 }
-check('Luminance ceiling', `all ${allFg.size} distinct foreground colors <= luminance of ${F.primary}`,
-  tooBright.length ? tooBright.join(', ') : 'none exceed', v => v === 'none exceed',
-  `<= ${LUM_CAP.toFixed(4)}`);
+check(isLight ? 'Luminance floor' : 'Luminance ceiling',
+  `all ${allFg.size} distinct foreground colors ${isLight ? '>=' : '<='} luminance of ${F.primary}`,
+  offenders.length ? offenders.join(', ') : (isLight ? 'none below' : 'none exceed'),
+  v => v === (isLight ? 'none below' : 'none exceed'),
+  `${isLight ? '>=' : '<='} ${LUM_CAP.toFixed(4)}`);
 
 // Hard bans from the brief.
 const allColors = [...new Set([...Object.values(T.colors), ...allFg.keys()])];
@@ -229,7 +251,7 @@ check('Hard bans', 'no #000000 / #FFFFFF anywhere in the theme',
 const W = { sec: 26, lab: 52, val: 12, exp: 22 };
 let current = null;
 console.log('\n' + '='.repeat(122));
-console.log('  DEEP AZURE - CONTRAST REPORT');
+console.log(`  VIOLET HOUR - CONTRAST REPORT  (${variantName})`);
 console.log('='.repeat(122));
 for (const r of rows) {
   if (r.section !== current) {
@@ -245,7 +267,8 @@ for (const r of rows) {
   );
 }
 console.log('\n' + '='.repeat(122));
-console.log(`  ${checks - failures}/${checks} assertions passed` + (failures ? `  --  ${failures} FAILED` : '  --  all clear'));
+console.log(`  ${variantName}: ${checks - failures}/${checks} assertions passed` + (failures ? `  --  ${failures} FAILED` : '  --  all clear'));
 console.log('='.repeat(122) + '\n');
 
-process.exit(failures ? 1 : 0);
+grandFail += failures; grandTotal += checks;
+}

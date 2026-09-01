@@ -88,12 +88,13 @@ jobs:
           Copy-Item vscode/icon.png      "$stage/extension/icon.png"
           Copy-Item LICENSE.txt          "$stage/extension/LICENSE.txt"
           Copy-Item README.md            "$stage/extension/README.md"
-          Copy-Item theme/VioletHour.json "$stage/extension/themes/VioletHour.json"
+          Copy-Item theme/VioletHour.json       "$stage/extension/themes/VioletHour.json"
+          Copy-Item theme/VioletHour-Light.json "$stage/extension/themes/VioletHour-Light.json"
           Copy-Item vscode/extension.vsixmanifest "$stage/extension.vsixmanifest"
           Copy-Item -LiteralPath 'vscode/[Content_Types].xml' -Destination "$stage/[Content_Types].xml"
           # Same packer as the local script, so CI and local output match and the
           # entry names are guaranteed to use forward slashes.
-          ./scripts/make-vsix-zip.ps1 -Source $stage -Destination "$PWD/violet-hour-vscode-2.2.0.vsix"
+          ./scripts/make-vsix-zip.ps1 -Source $stage -Destination "$PWD/violet-hour-vscode-2.3.0.vsix"
 
       # Catches manifest regressions (bad publisher, missing icon, broken engines)
       # on every push, rather than at publish time when a tag is already cut.
@@ -109,7 +110,7 @@ jobs:
           mkdir -p "$stage/themes"
           cp vscode/package.json vscode/icon.png "$stage/"
           cp LICENSE.txt README.md CHANGELOG.md "$stage/"
-          cp theme/VioletHour.json "$stage/themes/"
+          cp theme/VioletHour.json theme/VioletHour-Light.json "$stage/themes/"
           cd "$stage"
           # vsce silently globs zero files under long paths, so assert it saw them.
           n=$(npx --yes @vscode/vsce@latest ls | wc -l)
@@ -123,7 +124,7 @@ jobs:
           New-Item -ItemType Directory -Force -Path dist | Out-Null
           Get-ChildItem vsix/bin/Release -Filter *.vsix -Recurse |
             Copy-Item -Destination dist/VioletHour.vsix
-          Copy-Item violet-hour-vscode-2.2.0.vsix dist/VioletHour-VSCode.vsix
+          Copy-Item violet-hour-vscode-2.3.0.vsix dist/VioletHour-VSCode.vsix
           Copy-Item build/VioletHour.pkgdef       dist/VioletHour.pkgdef
           Copy-Item "$env:RUNNER_TEMP/VioletHour-Marketplace.vsix" dist/VioletHour-Marketplace.vsix
           Get-ChildItem dist | Format-Table Name, Length
@@ -213,6 +214,6 @@ jobs:
           mkdir -p "$stage/themes"
           cp vscode/package.json vscode/icon.png "$stage/"
           cp LICENSE.txt README.md CHANGELOG.md "$stage/"
-          cp theme/VioletHour.json "$stage/themes/"
+          cp theme/VioletHour.json theme/VioletHour-Light.json "$stage/themes/"
           cd "$stage"
           npx --yes @vscode/vsce@latest publish --no-dependencies

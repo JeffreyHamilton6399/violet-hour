@@ -3,6 +3,27 @@
 All notable changes to Violet Hour are documented here.
 This project follows [Semantic Versioning](https://semver.org/).
 
+## [2.3.0] - 2026-09-01
+
+### Added
+- **Violet Hour Light.** The same hue plan solved against a bright ground, shipping in the
+  same extension — both themes appear in the picker.
+- A light theme is not an inverted dark one, and three constraints flip: the neutral ramp
+  descends from the editor, edges solve against the *darkest* adjacent surface rather than
+  the lightest, and the luminance rule becomes a floor instead of a ceiling. The selection
+  background binds instead of the editor. Light passes the same 113 assertions.
+- Visual Studio 2022 gets both themes too — two pkgdefs in one VSIX, each with its own
+  pinned GUID, the light one falling back to VS's built-in Light theme.
+
+### Changed
+- `theme/palette.json` split into `palette.dark.json` and `palette.light.json`.
+- `build-theme.js` and `contrast-check.js` take `--variant`; both build and verify all
+  variants by default.
+
+### Fixed
+- The contrast report header still read "DEEP AZURE" — a leftover the rename missed
+  because it was uppercase.
+
 ## [2.2.0] - 2026-09-01
 
 ### Changed

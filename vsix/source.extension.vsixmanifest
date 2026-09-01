@@ -6,11 +6,11 @@
     <!-- Publisher is the display name shown in Extensions > Manage Extensions.
          Change it if you want your own name on it. -->
     <Identity Id="VioletHour.4ACF8CE7-F434-4C4E-ABE5-CECBB2C41A53"
-              Version="2.2.0"
+              Version="2.3.0"
               Language="en-US"
               Publisher="Jeffrey Hamilton" />
     <DisplayName>Violet Hour</DisplayName>
-    <Description xml:space="preserve">A deep violet color theme for Visual Studio 2022, tuned for JavaScript, TypeScript, JSX/TSX and CSS. Named for the half-hour after sunset: a violet field, cool sky colors for structure, and the last warm light of the day for strings and numbers. Italic comments, keywords and parameters. Every color solved against a contrast budget rather than picked by eye.</Description>
+    <Description xml:space="preserve">A violet color theme for Visual Studio 2022 in dark and light, tuned for JavaScript, TypeScript, JSX/TSX and CSS. Named for the half-hour after sunset: a violet field, cool sky colors for structure, and the last warm light of the day for strings and numbers. Italic comments, keywords and parameters. Every color solved against a contrast budget rather than picked by eye.</Description>
     <MoreInfo>https://github.com/JeffreyHamilton6399/violet-hour</MoreInfo>
     <License>LICENSE.txt</License>
     <Icon>icon.png</Icon>
@@ -39,8 +39,9 @@
                   DisplayName="Visual Studio core editor" />
   </Prerequisites>
   <Assets>
-    <!-- The pkgdef produced by ThemeConverter. Build Action = Content,
-         Include in VSIX = true (see VioletHour.csproj). -->
+    <!-- One pkgdef per theme, both produced by ThemeConverter. Build Action =
+         Content, Include in VSIX = true (see VioletHour.csproj). -->
     <Asset Type="Microsoft.VisualStudio.VsPackage" d:Source="File" Path="VioletHour.pkgdef" />
+    <Asset Type="Microsoft.VisualStudio.VsPackage" d:Source="File" Path="VioletHour-Light.pkgdef" />
   </Assets>
 </PackageManifest>

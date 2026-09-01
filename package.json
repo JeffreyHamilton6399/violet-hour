@@ -1,8 +1,8 @@
 {
   "name": "violet-hour",
-  "version": "2.2.0",
+  "version": "2.3.0",
   "private": true,
-  "description": "Violet Hour - a deep violet color theme for Visual Studio 2022 and VS Code, tuned for JS/TS/JSX/CSS. Original palette, contrast-verified.",
+  "description": "Violet Hour - a violet color theme for Visual Studio 2022 and VS Code, dark and light. Original palette, contrast-verified.",
   "license": "MIT",
   "scripts": {
     "build": "node scripts/build-theme.js && node scripts/contrast-check.js",
@@ -12,6 +12,7 @@
     "vscode": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/install-vscode.ps1",
     "vscode:uninstall": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/install-vscode.ps1 -Uninstall",
     "preview": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/preview.ps1",
-    "preview:markup": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/preview.ps1 -Sample markup"
+    "preview:markup": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/preview.ps1 -Sample markup",
+    "preview:light": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/preview.ps1 -Variant light"
   }
 }
