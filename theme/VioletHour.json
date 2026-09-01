@@ -725,7 +725,7 @@
         "meta.embedded.line"
       ],
       "settings": {
-        "foreground": "#56CAA7"
+        "foreground": "#5ECA9B"
       }
     },
     {
@@ -891,7 +891,7 @@
         "meta.tag punctuation.definition.tag"
       ],
       "settings": {
-        "foreground": "#4FCAC6"
+        "foreground": "#5DD1C2"
       }
     },
     {

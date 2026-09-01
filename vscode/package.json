@@ -2,7 +2,7 @@
   "name": "violet-hour",
   "displayName": "Violet Hour",
   "description": "A deep violet color theme tuned for JS/TS/JSX/CSS. Cool sky colors for structure, warm low-sun light for literals.",
-  "version": "2.0.1",
+  "version": "2.1.0",
   "publisher": "jeffreyhamilton",
   "license": "MIT",
   "engines": {
@@ -37,5 +37,17 @@
     "javascript",
     "typescript",
     "react"
+  ],
+  "homepage": "https://github.com/JeffreyHamilton6399/violet-hour",
+  "bugs": {
+    "url": "https://github.com/JeffreyHamilton6399/violet-hour/issues"
+  },
+  "qna": "marketplace",
+  "badges": [
+    {
+      "url": "https://img.shields.io/badge/contrast-113%2F113-B694EF",
+      "href": "https://github.com/JeffreyHamilton6399/violet-hour#the-contrast-rules",
+      "description": "Every contrast assertion passes"
+    }
   ]
 }

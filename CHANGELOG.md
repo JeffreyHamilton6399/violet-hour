@@ -1,0 +1,55 @@
+# Changelog
+
+All notable changes to Violet Hour are documented here.
+This project follows [Semantic Versioning](https://semver.org/).
+
+## [2.1.0] - 2026-09-01
+
+### Changed
+- **Cool family consolidated.** `type`, `tagIntrinsic` and `templatePunct` were three
+  near-identical aquas within 16° of each other — in TSX, `PanelProps` and `<section>`
+  were indistinguishable. Intrinsic tags now deliberately share the `type` color (an
+  intrinsic element *is* a type-like thing), and template punctuation moved to mint
+  (156°). The cool family is now spaced 136 → 156 → 172 → 206.
+- Palette shrank by one distinct color as a result.
+
+### Added
+- `scripts/preview.ps1` renders the theme applied to real code with real glyphs, so
+  the palette can be reviewed as text rather than as swatches.
+
+## [2.0.1] - 2026-09-01
+
+### Fixed
+Five colors corrected after rendering the palette rather than only measuring it.
+All had passed every contrast assertion:
+
+- `cursor` `#E868E8` → `#D377EB` — a vivid magenta unrelated to any other hue.
+- `gitModified` `#85B941` → `#4A9BDA` — an acid olive, and one of four greens. Blue
+  also survives deuteranopia, lifting separation from `gitAdded` from 1.14 to 1.48.
+- `attribute` `#A0C86C` → `#8FD5A1` — a fifth green at a fourth hue; now shares the
+  regex hue, separated by lightness.
+- `parameter` `#D2C9BB` → `#DBC8BC` — a dirty beige reading as dropped-out grey.
+- `warning` `#D9B85E` → `#DEA45E` — sat on top of the string amber, and warning
+  squiggles render directly beside strings.
+
+### Added
+- Opt-in Marketplace publishing via a `VSCE_PAT` repository secret.
+
+## [2.0.0] - 2026-09-01
+
+### Added
+- **Violet Hour.** An original deep-violet palette. Every value solved against a
+  contrast budget rather than picked by eye; 113 assertions, all passing.
+- Neutral ramp derived from contrast targets between adjacent surfaces rather than
+  luminance multipliers — at these luminances the `+0.05` term in the contrast
+  formula dominates, and fixed multipliers collapse the steps.
+- The four status colors solved *together*, because red and green converge under
+  deuteranopia and must separate by simulated lightness rather than hue.
+
+### Removed
+- Deep Azure, which was a Night Owl derivative. No color in Violet Hour is taken or
+  adapted from another theme.
+
+### Fixed
+- Attribution for `scripts/baseline-keys.json`, a verbatim copy of `Complete_Dark.json`
+  from Microsoft's theme-converter-for-vs (MIT), which had never been credited.

@@ -93,7 +93,24 @@ jobs:
           Copy-Item -LiteralPath 'vscode/[Content_Types].xml' -Destination "$stage/[Content_Types].xml"
           # Same packer as the local script, so CI and local output match and the
           # entry names are guaranteed to use forward slashes.
-          ./scripts/make-vsix-zip.ps1 -Source $stage -Destination "$PWD/violet-hour-vscode-2.0.1.vsix"
+          ./scripts/make-vsix-zip.ps1 -Source $stage -Destination "$PWD/violet-hour-vscode-2.1.0.vsix"
+
+      # Catches manifest regressions (bad publisher, missing icon, broken engines)
+      # on every push, rather than at publish time when a tag is already cut.
+      - name: Validate Marketplace package
+        shell: bash
+        run: |
+          stage="$RUNNER_TEMP/vsce-validate"
+          mkdir -p "$stage/themes"
+          cp vscode/package.json vscode/icon.png "$stage/"
+          cp LICENSE.txt README.md CHANGELOG.md "$stage/"
+          cp theme/VioletHour.json "$stage/themes/"
+          cd "$stage"
+          # vsce silently globs zero files under long paths, so assert it saw them.
+          n=$(npx --yes @vscode/vsce@latest ls | wc -l)
+          echo "vsce sees $n files"
+          if [ "$n" -lt 5 ]; then echo "::error::vsce found $n files - expected at least 5"; exit 1; fi
+          npx --yes @vscode/vsce@latest package --out /dev/null
 
       - name: Collect artifacts
         shell: pwsh
@@ -101,7 +118,7 @@ jobs:
           New-Item -ItemType Directory -Force -Path dist | Out-Null
           Get-ChildItem vsix/bin/Release -Filter *.vsix -Recurse |
             Copy-Item -Destination dist/VioletHour.vsix
-          Copy-Item violet-hour-vscode-2.0.1.vsix dist/VioletHour-VSCode.vsix
+          Copy-Item violet-hour-vscode-2.1.0.vsix dist/VioletHour-VSCode.vsix
           Copy-Item build/VioletHour.pkgdef       dist/VioletHour.pkgdef
           Get-ChildItem dist | Format-Table Name, Length
 
@@ -184,7 +201,7 @@ jobs:
           stage="$RUNNER_TEMP/ext"
           mkdir -p "$stage/themes"
           cp vscode/package.json vscode/icon.png "$stage/"
-          cp LICENSE.txt README.md "$stage/"
+          cp LICENSE.txt README.md CHANGELOG.md "$stage/"
           cp theme/VioletHour.json "$stage/themes/"
           cd "$stage"
           npx --yes @vscode/vsce@latest publish --no-dependencies

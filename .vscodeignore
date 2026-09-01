@@ -1,0 +1,17 @@
+# Everything the VS Code extension does not need. The published package should be
+# the theme, its icon, the licence and the readme - nothing else.
+.github/**
+.tools/**
+.vscode/**
+build/**
+samples/**
+scripts/**
+vsix/**
+vscode/**
+theme/palette.json
+.gitattributes
+.gitignore
+CHANGELOG.md.bak
+**/*.ps1
+**/*.vsix
+**/.DS_Store

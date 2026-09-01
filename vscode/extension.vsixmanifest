@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
   <Metadata>
-    <Identity Language="en-US" Id="violet-hour" Version="2.0.1" Publisher="jeffreyhamilton" />
+    <Identity Language="en-US" Id="violet-hour" Version="2.1.0" Publisher="jeffreyhamilton" />
     <DisplayName>Violet Hour</DisplayName>
     <Description xml:space="preserve">A deep violet color theme tuned for JS/TS/JSX/CSS. Cool sky colors for structure, warm low-sun light for literals.</Description>
     <Tags>theme,color-theme,dark,violet,purple</Tags>

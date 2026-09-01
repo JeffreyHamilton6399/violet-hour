@@ -12,7 +12,7 @@ Original work. No color is taken or adapted from another theme, and every value 
 against a contrast budget rather than picked by eye** — the solvers are in `scripts/`, and the
 build refuses to ship a palette that violates them.
 
-![Violet Hour](preview.png)
+![Violet Hour](https://raw.githubusercontent.com/JeffreyHamilton6399/violet-hour/main/preview.png)
 
 *Regenerate with `npm run preview`. It renders the mock above straight from `palette.json`, so it
 can never drift from what ships.*
@@ -92,7 +92,8 @@ chrome never turns lurid. Never gray, never black.
 **Foregrounds** — `#DCCFE7` primary, `#B2A2C3` secondary, `#89799E` muted, `#9687AA` muted-on-chrome.
 
 **Syntax** — the hue plan *is* the design. Violet carries identity, rose carries grammar, warm
-carries literals, cool carries structure:
+carries literals, cool carries structure. The cool family is spaced 136 → 156 → 172 → 206 so no
+two of its members blur together:
 
 | Token | Hex | Hue | |
 |---|---|---|---|
@@ -100,13 +101,13 @@ carries literals, cool carries structure:
 | Keyword, storage, control flow | `#E582B1` | 332 | italic — the "grammar" rose |
 | Operator | `#D696BF` | 322 | |
 | Function / method | `#B694EF` | 262 | the lavender identity color |
-| Class, interface, type | `#5DD1C2` | 172 | cool aqua |
+| Class, interface, type | `#5DD1C2` | 172 | cool aqua — also intrinsic tags |
 | Object property / key | `#7DB5E1` | 206 | cool sky |
 | String | `#DEB052` | 40 | warm — the low sun |
 | Number, boolean, constant | `#E99177` | 14 | warm coral |
-| Template literal `${}` | `#56CAA7` | 162 | |
+| Template literal `${}` | `#5ECA9B` | 156 | mint |
 | Regex | `#6BC683` | 136 | |
-| JSX intrinsic tag | `#4FCAC6` | 178 | |
+| JSX intrinsic tag | `#5DD1C2` | 172 | deliberately the same as `type` |
 | JSX component tag | `#DCC16A` | 46 | |
 | Attribute name | `#8FD5A1` | 136 | same hue as regex, split by lightness |
 | Parameter | `#DBC8BC` | 22 | italic — a warm blush neutral, tied to the rose family |

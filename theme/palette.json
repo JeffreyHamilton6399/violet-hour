@@ -7,7 +7,7 @@
       "identity": "262 lavender -- accent, focus, links, function names",
       "grammar": "332 rose -- keywords, storage, decorators",
       "lowSun": "14 coral (numbers), 33 orange (warnings), 40 amber (strings), 46 gold (markup tags)",
-      "coolSky": "172 aqua (types), 206 blue (properties, git-modified), 136 green (regex, attributes) - one green hue at two lightnesses, not four scattered greens"
+      "coolSky": "136 green (regex, attributes), 156 mint (template punctuation), 172 aqua (types AND intrinsic tags - deliberately one colour, an intrinsic element is a type-like thing), 206 sky (properties, git-modified)"
     }
   },
   "neutral": {
@@ -48,7 +48,7 @@
     "keyword": "#E582B1",
     "operator": "#D696BF",
     "string": "#DEB052",
-    "templatePunct": "#56CAA7",
+    "templatePunct": "#5ECA9B",
     "number": "#E99177",
     "function": "#B694EF",
     "type": "#5DD1C2",
@@ -58,7 +58,7 @@
     "punctuation": "#A295BE",
     "decorator": "#E582B1",
     "regex": "#6BC683",
-    "tagIntrinsic": "#4FCAC6",
+    "tagIntrinsic": "#5DD1C2",
     "tagComponent": "#DCC16A",
     "attribute": "#8FD5A1",
     "cssSelector": "#DCC16A",
