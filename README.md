@@ -59,6 +59,20 @@ published there. That needs a Microsoft account and a token, so it is something 
 The job is opt-in: with no `VSCE_PAT` it logs a notice and skips, so forks and pull requests never
 try to publish. It refuses outright if `publisher` is still `local`.
 
+### Updating the published extension
+
+```powershell
+npm run upload
+```
+
+Downloads the Marketplace `.vsix` for the latest release into `upload/`, **named with its
+version**, and prints the path. Then on marketplace.visualstudio.com/manage: **Violet Hour → Update**.
+
+The version in the filename matters. The Marketplace refuses to overwrite a version that already
+exists — *"The version 2.2.0 already exists and cannot be modified"* — which reads like a Marketplace
+fault but almost always means a stale file got picked. Bump the version in `vscode/package.json`,
+tag, then `npm run upload`.
+
 To publish by hand instead:
 
 ```bash

@@ -5,6 +5,11 @@ This project follows [Semantic Versioning](https://semver.org/).
 
 ## [2.3.1] - 2026-09-01
 
+### Added
+- `npm run upload` fetches the Marketplace package for the latest release into `upload/`,
+  named with its version, so a stale file cannot be uploaded by mistake.
+
+
 ### Fixed
 - CI converted only the dark variant to a pkgdef. The VS 2022 package still built, but
   only because a generated `VioletHour-Light.pkgdef` had been committed by mistake and

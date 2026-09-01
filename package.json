@@ -13,6 +13,7 @@
     "vscode:uninstall": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/install-vscode.ps1 -Uninstall",
     "preview": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/preview.ps1",
     "preview:markup": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/preview.ps1 -Sample markup",
-    "preview:light": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/preview.ps1 -Variant light"
+    "preview:light": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/preview.ps1 -Variant light",
+    "upload": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/get-upload.ps1"
   }
 }
