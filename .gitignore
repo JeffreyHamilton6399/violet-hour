@@ -7,3 +7,6 @@ build/*.pkgdef
 vscode/violet-hour-*.vsix
 dist/
 stage/
+
+# built on demand for a manual Marketplace upload
+VioletHour-Marketplace.vsix

@@ -97,6 +97,11 @@ jobs:
 
       # Catches manifest regressions (bad publisher, missing icon, broken engines)
       # on every push, rather than at publish time when a tag is already cut.
+      # Also produces the package to UPLOAD BY HAND at
+      # marketplace.visualstudio.com/manage. It differs from the sideload .vsix:
+      # vsce declares Content.Details / Changelog / License assets, which are what
+      # make the listing page render a description at all. The hand-rolled package
+      # installs fine but would publish as a blank listing.
       - name: Validate Marketplace package
         shell: bash
         run: |
@@ -110,7 +115,7 @@ jobs:
           n=$(npx --yes @vscode/vsce@latest ls | wc -l)
           echo "vsce sees $n files"
           if [ "$n" -lt 5 ]; then echo "::error::vsce found $n files - expected at least 5"; exit 1; fi
-          npx --yes @vscode/vsce@latest package --out /dev/null
+          npx --yes @vscode/vsce@latest package --out "$RUNNER_TEMP/VioletHour-Marketplace.vsix"
 
       - name: Collect artifacts
         shell: pwsh
@@ -120,6 +125,7 @@ jobs:
             Copy-Item -Destination dist/VioletHour.vsix
           Copy-Item violet-hour-vscode-2.1.0.vsix dist/VioletHour-VSCode.vsix
           Copy-Item build/VioletHour.pkgdef       dist/VioletHour.pkgdef
+          Copy-Item "$env:RUNNER_TEMP/VioletHour-Marketplace.vsix" dist/VioletHour-Marketplace.vsix
           Get-ChildItem dist | Format-Table Name, Length
 
       - uses: actions/upload-artifact@v4
@@ -135,6 +141,7 @@ jobs:
           files: |
             dist/VioletHour.vsix
             dist/VioletHour-VSCode.vsix
+            dist/VioletHour-Marketplace.vsix
             dist/VioletHour.pkgdef
           generate_release_notes: true
           body: |
@@ -146,6 +153,10 @@ jobs:
             **VS Code** — download `VioletHour-VSCode.vsix`, then
             `code --install-extension VioletHour-VSCode.vsix`
             (or Extensions pane → `...` → *Install from VSIX*).
+
+            `VioletHour-Marketplace.vsix` is the same theme packaged by `vsce`
+            for uploading to the Marketplace by hand — it carries the readme,
+            changelog and licence assets the listing page needs.
 
             Every color is solved against a contrast budget, not picked by eye.
             Contrast report: 113/113 assertions pass. Original palette, MIT licensed.
