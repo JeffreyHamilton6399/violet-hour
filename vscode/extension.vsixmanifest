@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
+  <Metadata>
+    <Identity Language="en-US" Id="deep-azure" Version="1.0.0" Publisher="local" />
+    <DisplayName>Deep Azure</DisplayName>
+    <Description xml:space="preserve">A deep navy color theme tuned for JS/TS/JSX/CSS. Derived from Night Owl by Sarah Drasner.</Description>
+    <Tags>theme,color-theme,dark,navy</Tags>
+    <Categories>Themes</Categories>
+    <GalleryFlags>Public</GalleryFlags>
+    <Icon>extension/icon.png</Icon>
+    <Properties>
+      <Property Id="Microsoft.VisualStudio.Code.Engine" Value="^1.70.0" />
+      <Property Id="Microsoft.VisualStudio.Code.ExtensionDependencies" Value="" />
+      <Property Id="Microsoft.VisualStudio.Code.ExtensionPack" Value="" />
+      <Property Id="Microsoft.VisualStudio.Code.ExtensionKind" Value="ui,web" />
+    </Properties>
+  </Metadata>
+  <Installation>
+    <InstallationTarget Id="Microsoft.VisualStudio.Code" />
+  </Installation>
+  <Dependencies />
+  <Assets>
+    <Asset Type="Microsoft.VisualStudio.Code.Manifest" Path="extension/package.json" Addressable="true" />
+    <Asset Type="Microsoft.VisualStudio.Services.Icons.Default" Path="extension/icon.png" Addressable="true" />
+  </Assets>
+</PackageManifest>

@@ -1,0 +1,15 @@
+{
+  "name": "deep-azure",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Deep Azure - a deep navy color theme for Visual Studio 2022, tuned for JS/TS/JSX/CSS. Derived from Night Owl by Sarah Drasner.",
+  "license": "MIT",
+  "scripts": {
+    "build": "node scripts/build-theme.js && node scripts/contrast-check.js",
+    "theme": "node scripts/build-theme.js",
+    "check": "node scripts/contrast-check.js",
+    "vsix": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/build-vsix.ps1",
+    "vscode": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/install-vscode.ps1",
+    "vscode:uninstall": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/install-vscode.ps1 -Uninstall"
+  }
+}

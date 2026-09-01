@@ -1,0 +1,134 @@
+name: Build and release
+
+# GitHub's windows-latest runners ship Visual Studio 2022 Enterprise *including*
+# the VSSDK build targets, so the .vsix is built by the real toolchain here even
+# though no contributor needs VS 2022 installed locally.
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - uses: microsoft/setup-msbuild@v2
+
+      # ---------------------------------------------------- theme + verification
+      - name: Build theme JSON
+        run: node scripts/build-theme.js
+
+      - name: Verify contrast rules
+        run: node scripts/contrast-check.js
+
+      - name: Regenerate icon and check it is committed
+        shell: pwsh
+        run: |
+          node scripts/make-icon.js
+          # The icon is generated from the palette; if it no longer matches what
+          # is committed, the palette changed without the icon being refreshed.
+          git diff --exit-code -- vsix/icon.png vscode/icon.png
+
+      # ------------------------------------------------------------- pkgdef
+      - name: Build ThemeConverter
+        shell: pwsh
+        run: |
+          git clone --depth 1 https://github.com/microsoft/theme-converter-for-vs.git .tools/theme-converter
+          dotnet build .tools/theme-converter/ThemeConverter/ThemeConverter/ThemeConverter.csproj `
+            -c Release -o .tools/converter-bin
+
+      - name: Convert theme to .pkgdef
+        shell: pwsh
+        env:
+          DOTNET_ROLL_FORWARD: Major
+        run: |
+          # ThemeConverter takes the display name from the input FILENAME, and
+          # resolves its mapping files against the working directory.
+          New-Item -ItemType Directory -Force -Path build, stage | Out-Null
+          Copy-Item theme/DeepAzure.json 'stage/Deep Azure.json'
+          $stage = (Resolve-Path stage).Path
+          Push-Location .tools/converter-bin
+          dotnet ./ThemeConverter.dll -i "$stage/Deep Azure.json" -o $stage
+          Pop-Location
+          # Pin the theme GUID: the converter stamps a random one every run.
+          node scripts/finalize-pkgdef.js "stage/Deep Azure.pkgdef" build/DeepAzure.pkgdef
+          Copy-Item build/DeepAzure.pkgdef vsix/DeepAzure.pkgdef -Force
+
+      # --------------------------------------------------------------- vsix
+      - name: Package VSIX (Visual Studio 2022)
+        shell: pwsh
+        run: msbuild vsix/DeepAzure.csproj /t:Rebuild /p:Configuration=Release /v:minimal /restore
+
+      - name: Package VSIX (VS Code)
+        shell: pwsh
+        run: |
+          # Build only -- the install step in the script needs a local VS Code.
+          $stage = Join-Path $env:RUNNER_TEMP 'vscode-ext'
+          New-Item -ItemType Directory -Force -Path "$stage/extension/themes" | Out-Null
+          Copy-Item vscode/package.json  "$stage/extension/package.json"
+          Copy-Item vscode/icon.png      "$stage/extension/icon.png"
+          Copy-Item LICENSE.txt          "$stage/extension/LICENSE.txt"
+          Copy-Item README.md            "$stage/extension/README.md"
+          Copy-Item theme/DeepAzure.json "$stage/extension/themes/DeepAzure.json"
+          Copy-Item vscode/extension.vsixmanifest "$stage/extension.vsixmanifest"
+          Copy-Item -LiteralPath 'vscode/[Content_Types].xml' -Destination "$stage/[Content_Types].xml"
+          # Same packer as the local script, so CI and local output match and the
+          # entry names are guaranteed to use forward slashes.
+          ./scripts/make-vsix-zip.ps1 -Source $stage -Destination "$PWD/deep-azure-vscode-1.0.0.vsix"
+
+      - name: Collect artifacts
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path dist | Out-Null
+          Get-ChildItem vsix/bin/Release -Filter *.vsix -Recurse |
+            Copy-Item -Destination dist/DeepAzure.vsix
+          Copy-Item deep-azure-vscode-1.0.0.vsix dist/DeepAzure-VSCode.vsix
+          Copy-Item build/DeepAzure.pkgdef       dist/DeepAzure.pkgdef
+          Get-ChildItem dist | Format-Table Name, Length
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: deep-azure
+          path: dist/*
+
+      # ------------------------------------------------------------ release
+      - name: Publish release
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            dist/DeepAzure.vsix
+            dist/DeepAzure-VSCode.vsix
+            dist/DeepAzure.pkgdef
+          generate_release_notes: true
+          body: |
+            ## Install
+
+            **Visual Studio 2022** — download `DeepAzure.vsix`, double-click it,
+            restart VS, then **Tools → Theme → Deep Azure**.
+
+            **VS Code** — download `DeepAzure-VSCode.vsix`, then
+            `code --install-extension DeepAzure-VSCode.vsix`
+            (or Extensions pane → `...` → *Install from VSIX*).
+
+            Contrast report: 113/113 assertions pass.
+            Derived from [Night Owl](https://github.com/sdras/night-owl-vscode-theme) by Sarah Drasner (MIT).

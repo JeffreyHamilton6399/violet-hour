@@ -1,0 +1,28 @@
+{
+  "name": "deep-azure",
+  "displayName": "Deep Azure",
+  "description": "A deep navy color theme tuned for JS/TS/JSX/CSS. Derived from Night Owl by Sarah Drasner.",
+  "version": "1.0.0",
+  "publisher": "local",
+  "license": "MIT",
+  "engines": {
+    "vscode": "^1.70.0"
+  },
+  "categories": [
+    "Themes"
+  ],
+  "contributes": {
+    "themes": [
+      {
+        "label": "Deep Azure",
+        "uiTheme": "vs-dark",
+        "path": "./themes/DeepAzure.json"
+      }
+    ]
+  },
+  "icon": "icon.png",
+  "galleryBanner": {
+    "color": "#011627",
+    "theme": "dark"
+  }
+}

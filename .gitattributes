@@ -1,0 +1,8 @@
+# Deterministic line endings: the CI icon check does `git diff --exit-code`,
+# which would fire spuriously if checkouts renormalised text files.
+* text=auto eol=lf
+
+# Binary payloads - never touch these.
+*.png     binary
+*.vsix    binary
+*.pkgdef  binary

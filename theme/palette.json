@@ -1,0 +1,65 @@
+{
+  "$comment": "Deep Azure palette -- the ONE place colors are defined. Edit a hex here, then run `npm run build` (build-theme.js + contrast-check.js). Values marked ADJUSTED differ from the original design brief; scripts/contrast-check.js explains why each one had to move.",
+
+  "neutral": {
+    "well":               "#010E1B",
+    "editorBg":           "#011627",
+    "panelBg":            "#01202F",
+    "chromeBg":           "#0B2942",
+    "hoverBg":            "#0F3252",
+    "selectionBg":        "#1D3B53",
+    "inactiveSelBg":      "#122E44",
+    "border":             "#194A74",
+    "indentGuide":        "#184264",
+    "indentGuideActive":  "#26669B",
+    "scrollSlider":       "#20425D",
+    "scrollSliderHover":  "#2C597D",
+    "scrollSliderActive": "#3973A2"
+  },
+
+  "fg": {
+    "primary":       "#D6DEEB",
+    "secondary":     "#A8B9CC",
+    "muted":         "#5F7E97",
+    "mutedOnChrome": "#618099"
+  },
+
+  "state": {
+    "accent":      "#90AFF1",
+    "cursor":      "#7E57C2",
+    "findMatchBg": "#163C56",
+    "findOtherBg": "#102C40",
+    "error":       "#EA5855",
+    "warning":     "#D9C46A",
+    "info":        "#90AFF1",
+    "gitAdded":    "#ADDB67",
+    "gitRemoved":  "#EA5855",
+    "gitModified": "#C5E478"
+  },
+
+  "syntax": {
+    "comment":       "#637777",
+    "keyword":       "#C792EA",
+    "operator":      "#C792EA",
+    "string":        "#ECC48D",
+    "templatePunct": "#7FDBCA",
+    "number":        "#ED9176",
+    "function":      "#90AFF1",
+    "type":          "#F2CA98",
+    "variable":      "#D6DEEB",
+    "parameter":     "#D7DBE0",
+    "property":      "#80CBC4",
+    "punctuation":   "#7E9CB8",
+    "decorator":     "#C792EA",
+    "regex":         "#5CA7E4",
+    "tagIntrinsic":  "#7FDBCA",
+    "tagComponent":  "#F2CA98",
+    "attribute":     "#C5E478",
+    "cssSelector":   "#F2CA98",
+    "cssProperty":   "#80CBC4",
+    "cssValue":      "#ECC48D",
+    "cssUnit":       "#ED9176",
+    "invalid":       "#ED7370",
+    "deprecated":    "#7E9CB8"
+  }
+}
