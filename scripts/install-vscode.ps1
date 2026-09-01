@@ -114,7 +114,7 @@ Copy-Item -LiteralPath (Join-Path $Root 'vscode\[Content_Types].xml') `
           -Destination (Join-Path $Stage '[Content_Types].xml') -Force
 
 # ------------------------------------------------------------------- zip it up
-$Vsix = Join-Path $Root 'vscode\violet-hour-2.3.0.vsix'
+$Vsix = Join-Path $Root 'vscode\violet-hour-2.3.1.vsix'
 & (Join-Path $PSScriptRoot 'make-vsix-zip.ps1') -Source $Stage -Destination $Vsix
 
 Remove-Item $Stage -Recurse -Force -ErrorAction SilentlyContinue

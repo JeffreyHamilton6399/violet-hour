@@ -3,6 +3,14 @@
 All notable changes to Violet Hour are documented here.
 This project follows [Semantic Versioning](https://semver.org/).
 
+## [2.3.1] - 2026-09-01
+
+### Fixed
+- CI converted only the dark variant to a pkgdef. The VS 2022 package still built, but
+  only because a generated `VioletHour-Light.pkgdef` had been committed by mistake and
+  MSBuild picked up that stale file instead of failing. CI now converts both variants and
+  the generated pkgdefs are gitignored.
+
 ## [2.3.0] - 2026-09-01
 
 ### Added

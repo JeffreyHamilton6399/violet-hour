@@ -10,3 +10,5 @@ stage/
 
 # built on demand for a manual Marketplace upload
 VioletHour-Marketplace.vsix
+vsix/VioletHour-Light.pkgdef
+build/*.pkgdef

@@ -2,7 +2,7 @@
   "name": "violet-hour",
   "displayName": "Violet Hour",
   "description": "A violet color theme for JS/TS/JSX/CSS, dark and light. Cool sky colors for structure, warm low-sun light for literals.",
-  "version": "2.3.0",
+  "version": "2.3.1",
   "publisher": "jeffreyhamilton",
   "license": "MIT",
   "engines": {

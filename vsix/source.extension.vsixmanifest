@@ -6,7 +6,7 @@
     <!-- Publisher is the display name shown in Extensions > Manage Extensions.
          Change it if you want your own name on it. -->
     <Identity Id="VioletHour.4ACF8CE7-F434-4C4E-ABE5-CECBB2C41A53"
-              Version="2.3.0"
+              Version="2.3.1"
               Language="en-US"
               Publisher="Jeffrey Hamilton" />
     <DisplayName>Violet Hour</DisplayName>
