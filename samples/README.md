@@ -1,6 +1,6 @@
 # Rendering samples
 
-Open these three files side by side after switching to Deep Azure. They cover the
+Open these three files side by side after switching to Violet Hour. They cover the
 "Done when" checks from the brief:
 
 | File | What to look for |

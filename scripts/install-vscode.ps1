@@ -1,18 +1,18 @@
 <#
 .SYNOPSIS
-    Packages Deep Azure as a VS Code extension and installs it.
+    Packages Violet Hour as a VS Code extension and installs it.
 
 .DESCRIPTION
     The pkgdef/VSIX pipeline in build-vsix.ps1 targets Visual Studio 2022 and
     produces nothing VS Code can load -- they are different package formats.
-    This builds the VS Code side from the same theme/DeepAzure.json.
+    This builds the VS Code side from the same theme/VioletHour.json.
 
     A VS Code .vsix is an OPC zip:
 
         [Content_Types].xml
         extension.vsixmanifest
         extension/package.json
-        extension/themes/DeepAzure.json
+        extension/themes/VioletHour.json
 
     It is built here with System.IO.Compression rather than @vscode/vsce so the
     project keeps zero npm dependencies (see make-vsix-zip.ps1 for why the entry
@@ -37,8 +37,8 @@ param(
 
 $ErrorActionPreference = 'Stop'
 $Root      = Split-Path -Parent $PSScriptRoot
-$ThemeJson = Join-Path $Root 'theme\DeepAzure.json'
-$ExtId     = 'local.deep-azure'
+$ThemeJson = Join-Path $Root 'theme\VioletHour.json'
+$ExtId     = 'local.violet-hour'
 
 # ------------------------------------------------------------- locate code CLI
 function Find-CodeCli {
@@ -83,19 +83,19 @@ if ($Uninstall) {
 }
 
 # -------------------------------------------------------------- sanity checks
-if (-not (Test-Path $ThemeJson)) { throw 'theme\DeepAzure.json is missing. Run `npm run build` first.' }
+if (-not (Test-Path $ThemeJson)) { throw 'theme\VioletHour.json is missing. Run `npm run build` first.' }
 $theme = Get-Content $ThemeJson -Raw | ConvertFrom-Json
 $colorCount = ($theme.colors | Get-Member -MemberType NoteProperty).Count
-if ($colorCount -lt 500) { throw "theme\DeepAzure.json looks incomplete ($colorCount colors). Run `npm run build`." }
+if ($colorCount -lt 500) { throw "theme\VioletHour.json looks incomplete ($colorCount colors). Run `npm run build`." }
 Write-Host "theme: $($theme.name), $colorCount workbench colors, $($theme.tokenColors.Count) token rules"
 
 # ----------------------------------------------------------------- stage files
-$Stage = Join-Path ([System.IO.Path]::GetTempPath()) ("DeepAzureVsCode_" + [guid]::NewGuid().ToString('N'))
+$Stage = Join-Path ([System.IO.Path]::GetTempPath()) ("VioletHourVsCode_" + [guid]::NewGuid().ToString('N'))
 $ExtDir = Join-Path $Stage 'extension'
 New-Item -ItemType Directory -Force -Path (Join-Path $ExtDir 'themes') | Out-Null
 
 Copy-Item (Join-Path $Root 'vscode\package.json') (Join-Path $ExtDir 'package.json') -Force
-Copy-Item $ThemeJson (Join-Path $ExtDir 'themes\DeepAzure.json') -Force
+Copy-Item $ThemeJson (Join-Path $ExtDir 'themes\VioletHour.json') -Force
 Copy-Item (Join-Path $Root 'LICENSE.txt') (Join-Path $ExtDir 'LICENSE.txt') -Force
 
 Copy-Item (Join-Path $Root 'vscode\icon.png')   (Join-Path $ExtDir 'icon.png') -Force
@@ -110,7 +110,7 @@ Copy-Item -LiteralPath (Join-Path $Root 'vscode\[Content_Types].xml') `
           -Destination (Join-Path $Stage '[Content_Types].xml') -Force
 
 # ------------------------------------------------------------------- zip it up
-$Vsix = Join-Path $Root 'vscode\deep-azure-1.0.1.vsix'
+$Vsix = Join-Path $Root 'vscode\violet-hour-2.0.0.vsix'
 & (Join-Path $PSScriptRoot 'make-vsix-zip.ps1') -Source $Stage -Destination $Vsix
 
 Remove-Item $Stage -Recurse -Force -ErrorAction SilentlyContinue
@@ -121,6 +121,6 @@ if ($LASTEXITCODE -ne 0) { throw 'code --install-extension failed.' }
 
 Write-Host "`nInstalled." -ForegroundColor Green
 Write-Host '  1. Restart VS Code (or run "Developer: Reload Window").'
-Write-Host '  2. Ctrl+K Ctrl+T  ->  "Deep Azure".'
+Write-Host '  2. Ctrl+K Ctrl+T  ->  "Violet Hour".'
 Write-Host '  3. Open samples\sample.tsx, sample.css and package.json to check the rendering.'
 Write-Host "`nRe-run this after any palette change. Uninstall with: -Uninstall"

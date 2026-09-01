@@ -1,13 +1,13 @@
 <#
 .SYNOPSIS
-    Builds Deep Azure end to end: theme JSON -> contrast report -> .pkgdef -> .vsix
+    Builds Violet Hour end to end: theme JSON -> contrast report -> .pkgdef -> .vsix
 
 .DESCRIPTION
     Stages:
-      1. node scripts/build-theme.js      - expand palette.json into DeepAzure.json
+      1. node scripts/build-theme.js      - expand palette.json into VioletHour.json
       2. node scripts/contrast-check.js   - verify the contrast rules (build stops on failure)
-      3. ThemeConverter                   - DeepAzure.json -> build/DeepAzure.pkgdef
-      4. MSBuild vsix/DeepAzure.csproj    - package the pkgdef into DeepAzure.vsix
+      3. ThemeConverter                   - VioletHour.json -> build/VioletHour.pkgdef
+      4. MSBuild vsix/VioletHour.csproj    - package the pkgdef into VioletHour.vsix
 
     The converter is cloned and built on first run into .tools/theme-converter.
 
@@ -33,7 +33,7 @@ $ErrorActionPreference = 'Stop'
 $Root      = Split-Path -Parent $PSScriptRoot
 $ToolsDir  = Join-Path $Root '.tools'
 $ConvDir   = Join-Path $ToolsDir 'theme-converter'
-$ThemeJson = Join-Path $Root 'theme\DeepAzure.json'
+$ThemeJson = Join-Path $Root 'theme\VioletHour.json'
 $BuildDir  = Join-Path $Root 'build'
 $VsixDir   = Join-Path $Root 'vsix'
 
@@ -114,7 +114,7 @@ if ($LaunchVS) {
     try   { & $ConvExe @ConvArgs -i $ThemeJson -t $LaunchVS }
     finally { Pop-Location }
     if ($LASTEXITCODE -ne 0) { throw 'ThemeConverter failed to patch the VS install.' }
-    Write-Host "`nVisual Studio launched with Deep Azure applied. Tools > Theme to switch." -ForegroundColor Green
+    Write-Host "`nVisual Studio launched with Violet Hour applied. Tools > Theme to switch." -ForegroundColor Green
     return
 }
 
@@ -123,10 +123,10 @@ New-Item -ItemType Directory -Force -Path $BuildDir | Out-Null
 
 # ThemeConverter takes the theme's DISPLAY NAME from the input filename, not
 # from the "name" field in the JSON. Stage a correctly-named copy so the theme
-# shows up as "Deep Azure" under Tools > Theme rather than "DeepAzure".
-$Staged = Join-Path ([System.IO.Path]::GetTempPath()) 'DeepAzureStage'
+# shows up as "Violet Hour" under Tools > Theme rather than "VioletHour".
+$Staged = Join-Path ([System.IO.Path]::GetTempPath()) 'VioletHourStage'
 New-Item -ItemType Directory -Force -Path $Staged | Out-Null
-$StagedJson = Join-Path $Staged 'Deep Azure.json'
+$StagedJson = Join-Path $Staged 'Violet Hour.json'
 Copy-Item $ThemeJson $StagedJson -Force
 
 Push-Location $ConvOut
@@ -134,18 +134,18 @@ try   { & $ConvExe @ConvArgs -i $StagedJson -o $Staged }
 finally { Pop-Location }
 if ($LASTEXITCODE -ne 0) { throw 'ThemeConverter failed.' }
 
-$Raw = Join-Path $Staged 'Deep Azure.pkgdef'
+$Raw = Join-Path $Staged 'Violet Hour.pkgdef'
 if (-not (Test-Path $Raw)) { throw "ThemeConverter produced no .pkgdef in $Staged." }
 
 # Pin the theme GUID: the converter stamps a fresh Guid.NewGuid() every run, so
 # without this each rebuild registers as a whole new theme in VS.
 Step 5 'Finalizing .pkgdef (pin GUID, verify name)'
-$Pkgdef = Join-Path $BuildDir 'DeepAzure.pkgdef'
+$Pkgdef = Join-Path $BuildDir 'VioletHour.pkgdef'
 & node (Join-Path $Root 'scripts\finalize-pkgdef.js') $Raw $Pkgdef
 if ($LASTEXITCODE -ne 0) { throw 'finalize-pkgdef.js failed.' }
 
 Remove-Item $Staged -Recurse -Force -ErrorAction SilentlyContinue
-Copy-Item $Pkgdef (Join-Path $VsixDir 'DeepAzure.pkgdef') -Force
+Copy-Item $Pkgdef (Join-Path $VsixDir 'VioletHour.pkgdef') -Force
 
 # ------------------------------------------------------------------ 5: the VSIX
 Step 6 'Packaging the VSIX'
@@ -165,7 +165,7 @@ see "Install without building a VSIX" in README.md.
 }
 
 Write-Host "  msbuild: $msbuild"
-& $msbuild (Join-Path $VsixDir 'DeepAzure.csproj') /t:Rebuild /p:Configuration=$Configuration /v:minimal /restore
+& $msbuild (Join-Path $VsixDir 'VioletHour.csproj') /t:Rebuild /p:Configuration=$Configuration /v:minimal /restore
 if ($LASTEXITCODE -ne 0) { throw 'MSBuild failed to package the VSIX.' }
 
 $Vsix = Get-ChildItem -Path (Join-Path $VsixDir "bin\$Configuration") -Filter '*.vsix' -Recurse |

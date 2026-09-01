@@ -7,7 +7,7 @@
  *  1. It takes the theme's display name from the INPUT FILENAME
  *     (Converter.cs: `Path.GetFileNameWithoutExtension(themeJsonFilePath)`),
  *     ignoring the "name" field inside the JSON. The build works around that by
- *     staging a copy named "Deep Azure.json", so this script only asserts it.
+ *     staging a copy named "Violet Hour.json", so this script only asserts it.
  *
  *  2. It stamps a `Guid.NewGuid()` on every run (Converter.cs:116). A random
  *     theme GUID per build means each rebuild registers as a BRAND NEW theme:
@@ -21,8 +21,8 @@ const fs = require('fs');
 
 // Generated once for this theme. Must never change across releases -- VS keys
 // the installed theme off it.
-const THEME_GUID = '{a94d99c4-5bde-4e9e-bb06-4ffa2cc54b28}';
-const THEME_NAME = 'Deep Azure';
+const THEME_GUID = '{8c74cad4-6a89-4e18-b8cf-bd329c407c61}';
+const THEME_NAME = 'Violet Hour';
 
 const [, , inPath, outPath] = process.argv;
 if (!inPath || !outPath) {

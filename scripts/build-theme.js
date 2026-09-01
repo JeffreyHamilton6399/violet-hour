@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 /**
- * Deep Azure theme builder.
+ * Violet Hour theme builder.
  *
  * Reads theme/palette.json and expands it across the complete VS Code workbench
- * color key set, producing theme/DeepAzure.json.
+ * color key set, producing theme/VioletHour.json.
  *
  * The key set comes from scripts/baseline-keys.json, which is
  * ThemeConverterTests/TestFiles/Complete_Dark.json from
@@ -941,7 +941,7 @@ for (const k of required) colors[k] = c[k];
 for (const k of extra) colors[k] = c[k];
 
 const theme = {
-  name: 'Deep Azure',
+  name: 'Violet Hour',
   type: 'dark',
   semanticHighlighting: true,
   colors,
@@ -949,9 +949,9 @@ const theme = {
   tokenColors,
 };
 
-fs.writeFileSync(path.join(ROOT, 'theme/DeepAzure.json'), JSON.stringify(theme, null, 2) + '\n');
+fs.writeFileSync(path.join(ROOT, 'theme/VioletHour.json'), JSON.stringify(theme, null, 2) + '\n');
 
-console.log('Deep Azure built -> theme/DeepAzure.json');
+console.log('Violet Hour built -> theme/VioletHour.json');
 console.log(`  workbench colors : ${Object.keys(colors).length} (${required.length} required, ${extra.length} extra)`);
 console.log(`  tokenColors      : ${tokenColors.length} rules, ${tokenColors.reduce((n, r) => n + r.scope.length, 0)} scopes`);
 console.log(`  semantic tokens  : ${Object.keys(semanticTokenColors).length}`);

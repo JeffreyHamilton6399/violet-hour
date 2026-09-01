@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 /**
- * Deep Azure contrast verification.
+ * Violet Hour contrast verification.
  *
- * Deep Azure deliberately sits below the usual WCAG AA targets in places -- that
+ * Violet Hour deliberately sits below the usual WCAG AA targets in places -- that
  * softness is the design. So this asserts the theme's OWN floors and ceilings,
  * not standard accessibility floors. Run after every build:
  *
@@ -16,7 +16,7 @@ const path = require('path');
 
 const ROOT = path.join(__dirname, '..');
 const P = JSON.parse(fs.readFileSync(path.join(ROOT, 'theme/palette.json'), 'utf8'));
-const T = JSON.parse(fs.readFileSync(path.join(ROOT, 'theme/DeepAzure.json'), 'utf8'));
+const T = JSON.parse(fs.readFileSync(path.join(ROOT, 'theme/VioletHour.json'), 'utf8'));
 const N = P.neutral, F = P.fg, S = P.state, X = P.syntax;
 
 // ------------------------------------------------------------------ color math

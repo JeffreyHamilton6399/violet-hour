@@ -1,8 +1,8 @@
 {
-  "name": "deep-azure",
-  "displayName": "Deep Azure",
-  "description": "A deep navy color theme tuned for JS/TS/JSX/CSS. Derived from Night Owl by Sarah Drasner.",
-  "version": "1.0.1",
+  "name": "violet-hour",
+  "displayName": "Violet Hour",
+  "description": "A deep violet color theme tuned for JS/TS/JSX/CSS. Cool sky colors for structure, warm low-sun light for literals.",
+  "version": "2.0.0",
   "publisher": "local",
   "license": "MIT",
   "engines": {
@@ -14,15 +14,28 @@
   "contributes": {
     "themes": [
       {
-        "label": "Deep Azure",
+        "label": "Violet Hour",
         "uiTheme": "vs-dark",
-        "path": "./themes/DeepAzure.json"
+        "path": "./themes/VioletHour.json"
       }
     ]
   },
   "icon": "icon.png",
   "galleryBanner": {
-    "color": "#011627",
+    "color": "#16111F",
     "theme": "dark"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/JeffreyHamilton6399/violet-hour"
+  },
+  "keywords": [
+    "theme",
+    "dark",
+    "violet",
+    "purple",
+    "javascript",
+    "typescript",
+    "react"
+  ]
 }

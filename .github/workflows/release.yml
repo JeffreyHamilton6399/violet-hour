@@ -64,19 +64,19 @@ jobs:
           # ThemeConverter takes the display name from the input FILENAME, and
           # resolves its mapping files against the working directory.
           New-Item -ItemType Directory -Force -Path build, stage | Out-Null
-          Copy-Item theme/DeepAzure.json 'stage/Deep Azure.json'
+          Copy-Item theme/VioletHour.json 'stage/Violet Hour.json'
           $stage = (Resolve-Path stage).Path
           Push-Location .tools/converter-bin
-          dotnet ./ThemeConverter.dll -i "$stage/Deep Azure.json" -o $stage
+          dotnet ./ThemeConverter.dll -i "$stage/Violet Hour.json" -o $stage
           Pop-Location
           # Pin the theme GUID: the converter stamps a random one every run.
-          node scripts/finalize-pkgdef.js "stage/Deep Azure.pkgdef" build/DeepAzure.pkgdef
-          Copy-Item build/DeepAzure.pkgdef vsix/DeepAzure.pkgdef -Force
+          node scripts/finalize-pkgdef.js "stage/Violet Hour.pkgdef" build/VioletHour.pkgdef
+          Copy-Item build/VioletHour.pkgdef vsix/VioletHour.pkgdef -Force
 
       # --------------------------------------------------------------- vsix
       - name: Package VSIX (Visual Studio 2022)
         shell: pwsh
-        run: msbuild vsix/DeepAzure.csproj /t:Rebuild /p:Configuration=Release /v:minimal /restore
+        run: msbuild vsix/VioletHour.csproj /t:Rebuild /p:Configuration=Release /v:minimal /restore
 
       - name: Package VSIX (VS Code)
         shell: pwsh
@@ -88,26 +88,26 @@ jobs:
           Copy-Item vscode/icon.png      "$stage/extension/icon.png"
           Copy-Item LICENSE.txt          "$stage/extension/LICENSE.txt"
           Copy-Item README.md            "$stage/extension/README.md"
-          Copy-Item theme/DeepAzure.json "$stage/extension/themes/DeepAzure.json"
+          Copy-Item theme/VioletHour.json "$stage/extension/themes/VioletHour.json"
           Copy-Item vscode/extension.vsixmanifest "$stage/extension.vsixmanifest"
           Copy-Item -LiteralPath 'vscode/[Content_Types].xml' -Destination "$stage/[Content_Types].xml"
           # Same packer as the local script, so CI and local output match and the
           # entry names are guaranteed to use forward slashes.
-          ./scripts/make-vsix-zip.ps1 -Source $stage -Destination "$PWD/deep-azure-vscode-1.0.1.vsix"
+          ./scripts/make-vsix-zip.ps1 -Source $stage -Destination "$PWD/violet-hour-vscode-2.0.0.vsix"
 
       - name: Collect artifacts
         shell: pwsh
         run: |
           New-Item -ItemType Directory -Force -Path dist | Out-Null
           Get-ChildItem vsix/bin/Release -Filter *.vsix -Recurse |
-            Copy-Item -Destination dist/DeepAzure.vsix
-          Copy-Item deep-azure-vscode-1.0.1.vsix dist/DeepAzure-VSCode.vsix
-          Copy-Item build/DeepAzure.pkgdef       dist/DeepAzure.pkgdef
+            Copy-Item -Destination dist/VioletHour.vsix
+          Copy-Item violet-hour-vscode-2.0.0.vsix dist/VioletHour-VSCode.vsix
+          Copy-Item build/VioletHour.pkgdef       dist/VioletHour.pkgdef
           Get-ChildItem dist | Format-Table Name, Length
 
       - uses: actions/upload-artifact@v4
         with:
-          name: deep-azure
+          name: violet-hour
           path: dist/*
 
       # ------------------------------------------------------------ release
@@ -116,19 +116,19 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           files: |
-            dist/DeepAzure.vsix
-            dist/DeepAzure-VSCode.vsix
-            dist/DeepAzure.pkgdef
+            dist/VioletHour.vsix
+            dist/VioletHour-VSCode.vsix
+            dist/VioletHour.pkgdef
           generate_release_notes: true
           body: |
             ## Install
 
-            **Visual Studio 2022** — download `DeepAzure.vsix`, double-click it,
-            restart VS, then **Tools → Theme → Deep Azure**.
+            **Visual Studio 2022** — download `VioletHour.vsix`, double-click it,
+            restart VS, then **Tools → Theme → Violet Hour**.
 
-            **VS Code** — download `DeepAzure-VSCode.vsix`, then
-            `code --install-extension DeepAzure-VSCode.vsix`
+            **VS Code** — download `VioletHour-VSCode.vsix`, then
+            `code --install-extension VioletHour-VSCode.vsix`
             (or Extensions pane → `...` → *Install from VSIX*).
 
-            Contrast report: 113/113 assertions pass.
-            Derived from [Night Owl](https://github.com/sdras/night-owl-vscode-theme) by Sarah Drasner (MIT).
+            Every color is solved against a contrast budget, not picked by eye.
+            Contrast report: 113/113 assertions pass. Original palette, MIT licensed.

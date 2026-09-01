@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
   <Metadata>
-    <Identity Language="en-US" Id="deep-azure" Version="1.0.1" Publisher="local" />
-    <DisplayName>Deep Azure</DisplayName>
-    <Description xml:space="preserve">A deep navy color theme tuned for JS/TS/JSX/CSS. Derived from Night Owl by Sarah Drasner.</Description>
-    <Tags>theme,color-theme,dark,navy</Tags>
+    <Identity Language="en-US" Id="violet-hour" Version="2.0.0" Publisher="local" />
+    <DisplayName>Violet Hour</DisplayName>
+    <Description xml:space="preserve">A deep violet color theme tuned for JS/TS/JSX/CSS. Cool sky colors for structure, warm low-sun light for literals.</Description>
+    <Tags>theme,color-theme,dark,violet,purple</Tags>
     <Categories>Themes</Categories>
     <GalleryFlags>Public</GalleryFlags>
     <Icon>extension/icon.png</Icon>

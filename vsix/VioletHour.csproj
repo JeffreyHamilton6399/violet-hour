@@ -6,10 +6,10 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Release</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{444165CB-A356-4E44-9E35-4E5663241067}</ProjectGuid>
+    <ProjectGuid>{EAB48D78-0D2C-407D-89ED-20F02F509178}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>DeepAzure</RootNamespace>
-    <AssemblyName>DeepAzure</AssemblyName>
+    <RootNamespace>VioletHour</RootNamespace>
+    <AssemblyName>VioletHour</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
 
     <!-- This is a content-only VSIX: it ships a pkgdef, no managed package. -->
@@ -34,7 +34,7 @@
   <ItemGroup>
     <!-- Produced by ThemeConverter into ../build/ and copied here by
          scripts/build-vsix.ps1. This is the only payload of the extension. -->
-    <Content Include="DeepAzure.pkgdef">
+    <Content Include="VioletHour.pkgdef">
       <IncludeInVSIX>true</IncludeInVSIX>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -58,7 +58,7 @@
           Condition="Exists('$(VSToolsPath)\VSSDK\Microsoft.VsSDK.targets')" />
 
   <Target Name="VerifyPkgdefPresent" BeforeTargets="Build">
-    <Error Condition="!Exists('$(MSBuildProjectDirectory)\DeepAzure.pkgdef')"
-           Text="DeepAzure.pkgdef is missing. Run scripts/build-vsix.ps1, which generates it with ThemeConverter and copies it here." />
+    <Error Condition="!Exists('$(MSBuildProjectDirectory)\VioletHour.pkgdef')"
+           Text="VioletHour.pkgdef is missing. Run scripts/build-vsix.ps1, which generates it with ThemeConverter and copies it here." />
   </Target>
 </Project>

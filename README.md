@@ -1,239 +1,98 @@
-# Deep Azure
+# Violet Hour
 
-A deep navy color theme for **Visual Studio 2022**, tuned for JavaScript, TypeScript, JSX/TSX and CSS.
+A deep violet color theme for **Visual Studio 2022** and **VS Code**, tuned for JavaScript,
+TypeScript, JSX/TSX and CSS.
 
-Cool blue-tinted neutrals around hue 210°, warm peach and tan for strings and numbers, italic
-comments, keywords and parameters. Contrast is deliberately held in a soft band — bright enough to
-read all day, never sharp. No pure black, no pure white; nothing is lighter than `#D6DEEB`.
+Named for the half-hour after sunset. A violet field, cool sky colors carrying the structure of the
+code, and the last warm light of the day on strings and numbers. Italic comments, keywords and
+parameters. Contrast is deliberately held in a soft band — bright enough to read all day, never
+sharp.
 
-Derived from [Night Owl](https://github.com/sdras/night-owl-vscode-theme) by Sarah Drasner (MIT) —
-see [Credit](#credit).
-
----
-
-## How it is built
-
-VS 2022 loads themes from a compiled `.pkgdef` inside a VSIX. Nothing here hand-authors `.vstheme`
-XML. The chain is:
-
-```
-theme/palette.json          the one place colors are defined
-        |  scripts/build-theme.js
-        v
-theme/DeepAzure.json        complete VS Code theme JSON (561 workbench keys, all explicit)
-        |  scripts/contrast-check.js   <- verification gate, build stops here on failure
-        |  ThemeConverter.exe -i ... -o build/
-        v
-build/DeepAzure.pkgdef
-        |  MSBuild vsix/DeepAzure.csproj
-        v
-vsix/bin/Release/DeepAzure.vsix
-```
-
-### Why the theme JSON is generated, not hand-written
-
-ThemeConverter expects a **fully expanded** theme: every workbench color key present and explicitly
-set. An omitted key does not fall back sensibly — it converts to a bad value, which is how converted
-themes end up with black-on-black tool windows.
-
-The usual way to get a complete baseline is to run `Developer: Generate Color Theme from Current
-Settings` in VS Code and uncomment the result. This project takes a more reliable route:
-`scripts/baseline-keys.json` is ThemeConverter's own `Complete_Dark.json` test fixture — the
-converter's reference for what "complete" means. `build-theme.js` assigns a palette color to every
-key in it and **fails the build** if even one is left unassigned. That is why the build prints
-`561 required, 0 extra`.
-
----
-
-## Prerequisites
-
-| Tool | Needed for | Status on this machine |
-|---|---|---|
-| Node.js | building + verifying the theme JSON | **present** (v24.15.0) |
-| Git | fetching ThemeConverter | **present** (2.54.0) |
-| .NET SDK | building ThemeConverter -> `.pkgdef` | **present** (8.0.424, user-local) |
-| VS 2022 + "Visual Studio extension development" workload | packaging the `.vsix`, and running the theme | **missing** - install from <https://visualstudio.microsoft.com/downloads/> |
-
-### About the .NET SDK install
-
-The SDK was installed **per-user** into `%USERPROFILE%\.dotnet` with Microsoft's official
-`dotnet-install.ps1`, so it needed no administrator rights and touched nothing under
-`Program Files`. It is not on your `PATH` permanently. Either prepend it per session:
-
-```powershell
-$env:PATH = "$env:USERPROFILE\.dotnet;$env:PATH"
-```
-
-or add it to your user `PATH` once via **System Properties -> Environment Variables**.
-To remove it later, delete the `%USERPROFILE%\.dotnet` folder -- that is the whole install.
-
-ThemeConverter targets `net6.0`, which is out of support, so the build script sets
-`DOTNET_ROLL_FORWARD=Major` and runs it on the .NET 8 runtime. It also sets `DOTNET_ROOT` and
-invokes the tool through `dotnet ThemeConverter.dll`, because the app host compiled into
-`ThemeConverter.exe` does not look in a user-local SDK directory and would otherwise fail with
-"You must install .NET to run this application."
-
-The theme JSON, the contrast report and **`build/DeepAzure.pkgdef` all build today**. Only the
-final `.vsix` packaging step needs VS 2022.
-
----
-
-## Build
-
-```powershell
-npm run build      # theme JSON + contrast report
-npm run vsix       # the whole chain: theme -> report -> pkgdef -> vsix
-
-# if the user-local SDK is not on PATH for this session:
-$env:PATH = "$env:USERPROFILE\.dotnet;$env:PATH"; npm run vsix
-```
-
-Stages 1-5 (through `build/DeepAzure.pkgdef`) complete on this machine now. Stage 6 stops with a
-clear message until VS 2022 is installed.
-
-`scripts/build-vsix.ps1` clones and builds ThemeConverter into `.tools/` on first run and caches it
-after that. It refuses to continue if the contrast report fails.
-
-### Fast iteration loop
-
-Building a VSIX for every color tweak is slow. ThemeConverter's `-t` flag patches a VS installation
-in place and launches it with the theme already applied:
-
-```powershell
-.\scripts\build-vsix.ps1 -LaunchVS "C:\Program Files\Microsoft Visual Studio\2022\Community"
-```
-
-Use that while tuning. Build the VSIX only at the end.
-
-### ThemeConverter quirks the build works around
-
-Three behaviours in ThemeConverter will bite anyone converting a theme, so the build handles all
-three rather than leaving them to be discovered later:
-
-1. **The theme's display name comes from the input FILENAME**, not the `name` field inside the JSON
-   (`Converter.cs`: `Path.GetFileNameWithoutExtension(themeJsonFilePath)`). Converting
-   `DeepAzure.json` registers a theme called "DeepAzure". The build stages a copy named
-   `Deep Azure.json` in a temp folder and converts that instead, so it reads correctly under
-   **Tools -> Theme**.
-
-2. **The theme GUID is `Guid.NewGuid()` on every run** (`Converter.cs:116`). Left alone, every
-   rebuild registers as a brand-new theme: duplicates accumulate under Tools -> Theme, and the
-   user's selected theme resets on each update. `scripts/finalize-pkgdef.js` rewrites it to a GUID
-   generated once and pinned (`{a94d99c4-...}`), leaving the built-in Dark `FallbackId` untouched.
-   With that in place, two consecutive builds produce **byte-identical** pkgdefs.
-
-3. **It resolves its own mapping files relative to the current working directory**, not to the
-   assembly location, so it fails with `Could not find file '...TokenMappings.json'` unless invoked
-   from its output folder. The build pushes into `.tools/converter-bin` around each call.
-
-### One palette entry that does nothing in VS
-
-`state.cursor` (`#7E57C2`) has no effect in Visual Studio. ThemeConverter maps
-`editorCursor.foreground` to an **empty** VS token list, so the caret color is simply dropped. In VS
-the caret follows the Plain Text foreground. The entry is kept because it is correct for the VS Code
-JSON, but do not expect changing it to move anything in VS.
+Original work. No color is taken or adapted from another theme, and every value was **solved
+against a contrast budget rather than picked by eye** — the solvers are in `scripts/`, and the
+build refuses to ship a palette that violates them.
 
 ---
 
 ## Install
 
-### From a GitHub release (no build required)
-
 Grab the latest from the **[Releases](../../releases)** page:
 
 | File | For | How |
 |---|---|---|
-| `DeepAzure.vsix` | Visual Studio 2022 | double-click it, restart VS, then **Tools -> Theme -> Deep Azure** |
-| `DeepAzure-VSCode.vsix` | VS Code | `code --install-extension DeepAzure-VSCode.vsix`, or Extensions pane -> `...` -> *Install from VSIX* |
-| `DeepAzure.pkgdef` | VS 2022, manual | for dropping straight into a VS install (see below) |
+| `VioletHour.vsix` | Visual Studio 2022 | double-click, restart VS, then **Tools → Theme → Violet Hour** |
+| `VioletHour-VSCode.vsix` | VS Code | `code --install-extension VioletHour-VSCode.vsix`, or Extensions → `...` → *Install from VSIX* |
+| `VioletHour.pkgdef` | VS 2022, manual | drop straight into a VS install (see [Without a VSIX](#without-a-vsix)) |
 
-That is the normal way to use this: no toolchain, no build, same as any other theme you download.
-
-Releases are produced by `.github/workflows/release.yml` on a `v*` tag. It runs on
-`windows-latest`, which ships VS 2022 Enterprise **including the VSSDK build targets**, so the
-`.vsix` is packaged by the real Microsoft toolchain rather than hand-assembled -- and nobody needs
-VS 2022 installed locally to cut a release. Push a tag to publish:
-
-```bash
-git tag v1.0.1 && git push origin v1.0.1
-```
-
-The workflow also runs the contrast report and fails the build if any assertion regresses, and
-regenerates the icon to confirm it still matches the palette.
-
-### Without a VSIX
-
-If you have the `.pkgdef` but not the VS extension development workload, copy it in by hand:
-
-```powershell
-copy build\DeepAzure.pkgdef "C:\Program Files\Microsoft Visual Studio2\Community\Common7\IDE\CommonExtensions\Platform\"
-& "C:\Program Files\Microsoft Visual Studio2\Community\Common7\IDE\devenv.exe" /updateConfiguration
-```
-
-(Run that shell as Administrator -- it writes under `Program Files`.)
+No toolchain, no build — same as any other theme you download.
 
 ---
 
-## Seeing it in VS Code
+## The palette
 
-**The VS 2022 pipeline produces nothing VS Code can load** -- `.pkgdef` / VSSDK `.vsix` and a VS Code
-extension are different package formats, so Deep Azure will never show up in the VS Code Extensions
-pane just because the VS 2022 build succeeded. That is a separate install, built from the same
-`theme/DeepAzure.json`:
+Everything lives in `theme/palette.json`. Nothing else holds a literal hex.
 
-```powershell
-npm run vscode              # package a VS Code .vsix and install it
-npm run vscode:uninstall    # remove it
-```
+**Neutrals** — hue held at 267, saturation eased from 0.34 down to 0.25 as surfaces lighten so the
+chrome never turns lurid. Never gray, never black.
 
-Then **restart VS Code** and press <kbd>Ctrl</kbd>+<kbd>K</kbd> <kbd>Ctrl</kbd>+<kbd>T</kbd> ->
-**Deep Azure**.
+| Role | Hex | |
+|---|---|---|
+| Deepest well | `#110C17` | violet-black, not `#000000` |
+| Editor background | `#16111F` | |
+| Tool windows, panels, terminal | `#261D32` | |
+| Title bar, inactive tabs, current line | `#322740` | |
+| Hover | `#403153` | |
+| Selection / inactive selection | `#462F61` / `#332444` | |
+| Border | `#5D3F81` | 1.66:1 on chrome — visible only when looked for |
+| Indent guide / active | `#513A6C` / `#7B50AF` | |
 
-On a machine without VS 2022 this is also the only way to actually *look* at the theme.
+**Foregrounds** — `#DCCFE7` primary, `#B2A2C3` secondary, `#89799E` muted, `#9687AA` muted-on-chrome.
 
-Two implementation notes:
+**Syntax** — the hue plan *is* the design. Violet carries identity, rose carries grammar, warm
+carries literals, cool carries structure:
 
-- The `.vsix` is assembled directly with `System.IO.Compression` rather than `@vscode/vsce`, keeping
-  the project at zero npm dependencies. It uses `ZipFile::CreateFromDirectory` specifically because
-  `Compress-Archive` on Windows PowerShell 5.1 can write `\` path separators, which the OPC reader
-  rejects.
-- It installs through `code --install-extension`, not by copying a folder into
-  `~/.vscode/extensions`. VS Code registers extensions in `extensions.json` and reads that cache
-  rather than rescanning the directory, so a folder drop is not reliably picked up -- it will sit
-  there looking correct and never appear in the theme picker.
+| Token | Hex | Hue | |
+|---|---|---|---|
+| Comment | `#806795` | 273 | italic, recessive |
+| Keyword, storage, control flow | `#E582B1` | 332 | italic — the "grammar" rose |
+| Operator | `#D696BF` | 322 | |
+| Function / method | `#B694EF` | 262 | the lavender identity color |
+| Class, interface, type | `#5DD1C2` | 172 | cool aqua |
+| Object property / key | `#7DB5E1` | 206 | cool sky |
+| String | `#DEB052` | 40 | warm — the low sun |
+| Number, boolean, constant | `#E99177` | 14 | warm coral |
+| Template literal `${}` | `#56CAA7` | 162 | |
+| Regex | `#6BC683` | 136 | |
+| JSX intrinsic tag | `#4FCAC6` | 178 | |
+| JSX component tag | `#DCC16A` | 46 | |
+| Attribute name | `#A0C86C` | 86 | |
+| Parameter | `#D2C9BB` | 37 | italic |
+| Punctuation | `#A295BE` | 259 | |
 
-### Checking the rendering
+**State** — `#B694EF` accent, `#E25A68` error, `#D9B85E` warning, `#60CD76` added, `#85B941`
+modified. Those four were solved *together*: red and green collapse toward the same hue under
+deuteranopia, so they are separated by simulated lightness rather than by hue.
 
-`samples/` has the three files the brief's checklist calls for:
-
-| File | What to look for |
-|---|---|
-| `sample.tsx` | italic comments, keywords and parameters; JSX intrinsic tags (teal) vs component tags (tan); template-literal `${}` punctuation; regex |
-| `sample.css` | selector / property / value / unit each a different color |
-| `package.json` | keys distinct from string values; numbers and booleans distinct again |
-
-Nothing should render as unstyled default-foreground text.
-
-## Tweaking a color
-
-Every color in the theme traces back to `theme/palette.json`. Nothing else holds a literal hex.
+### Tweaking a color
 
 1. Edit the hex in `theme/palette.json`.
 2. `npm run build`.
-3. Read the report. If an assertion fails it tells you the exact pair and the floor it missed.
+3. Read the report. A failed assertion names the exact pair and the floor it missed.
 
 Roles are grouped so a change lands everywhere it should — editing `state.accent` moves the focus
-border, the active tab indicator, links, buttons, badges *and* the syntax color for function names
-in one go, because they are all the same design decision.
+border, active tab indicator, links, buttons, badges *and* function names in one go, because they
+are all the same design decision. Derived tints (hover washes, merge bands, bright ANSI variants)
+are computed from palette entries by `mix()` in `build-theme.js`.
 
-Derived tints (hover washes, merge-conflict bands, bright ANSI variants) are computed from palette
-entries by `mix()` in `build-theme.js`, so they follow along automatically.
+Then `npm run vscode` to look at it, or push a `v*` tag to cut a release.
 
-### The contrast rules
+---
 
-`scripts/contrast-check.js` asserts this theme's **own** floors, not standard WCAG AA. Deep Azure
-sits below AA in places on purpose — that softness is the design — so the checker encodes both
-floors *and* ceilings:
+## The contrast rules
+
+`scripts/contrast-check.js` asserts this theme's **own** floors and ceilings, not standard WCAG AA.
+Violet Hour sits below AA in places on purpose — that softness is the design — so the checker
+constrains from both sides:
 
 | Rule | Bound |
 |---|---|
@@ -246,105 +105,174 @@ floors *and* ceilings:
 | Any token over the selection background | ≥ 4.0:1 |
 | Error / warning / added / removed under deuteranopia | separated by lightness, not hue |
 | Token HSL saturation | ≤ 0.78 |
-| Any foreground's relative luminance | ≤ that of `#D6DEEB` |
+| Any foreground's relative luminance | ≤ that of `#DCCFE7` |
 | `#000000` / `#FFFFFF` | banned outright |
 
-Current status: **113/113 assertions pass.**
+**113/113 assertions pass.** The local build and the CI release both stop if that regresses.
 
-Two notes on how those are scoped, both deliberate:
+Two scoping decisions, both deliberate:
 
 - **Error red is excluded from the find-match check.** Holding `editor.findMatchBackground` to
-  4.0:1 against error red would have crushed the highlight to 1.3:1 against the editor — an
-  invisible find match. Error red marks squiggled text; it never renders as the body of a match.
+  4.0:1 against error red would crush the highlight to near-invisibility against the editor. Error
+  red marks squiggled text; it never renders as the body of a match. For the same reason the
+  *selection* floor does not apply to the state colors — they mark squiggles, gutters and icons,
+  never text sitting on a selection. `syntax.invalid` is the one that does, and it is solved
+  separately and comes out lighter than `state.error` as a result.
 - **The tonal-step floor is 1.08, not 1.6.** Background washes are not edges. Contrast ratio badly
-  understates perceptibility between two large adjacent fields, and the actual boundary is drawn by
-  `panel.border` (1.8:1 against the panel), not by the tonal step.
+  understates perceptibility between two large adjacent fields, and the boundary is drawn by
+  `panel.border` (2.2:1 against the editor), not by the tonal step.
 
 ---
 
-## Colors changed from the original design
+## How it is built
 
-The brief's palette was treated as intent, not gospel. Twelve values had to move to satisfy the
-rules above; each is a minimal adjustment that preserves hue and role.
+VS 2022 loads themes from a compiled `.pkgdef` inside a VSIX. Nothing here hand-authors `.vstheme`
+XML.
 
-| Role | From | To | Why |
-|---|---|---|---|
-| Accent / function name | `#82AAFF` | `#90AFF1` | HSL saturation was 1.000, over the 0.78 cap |
-| Class / type / JSX component / CSS selector | `#FFCB8B` | `#F2CA98` | saturation 1.000 > 0.78 |
-| Number / CSS unit | `#F78C6C` | `#ED9176` | saturation 0.897 > 0.78 |
-| Error / git removed | `#EF5350` | `#EA5855` | saturation 0.832 > 0.78 |
-| `invalid.illegal` | `#EF5350` | `#ED7370` | only 3.34:1 over the selection background; floor is 4.0:1 |
-| Warning | `#FFEB95` | `#D9C46A` | luminance 0.834 exceeded `#D6DEEB` (0.725) — it was the brightest thing on screen |
-| Border / separator | `#0E2A42` | `#194A74` | was **1.01:1** against the title bar — separators vanished entirely |
-| Indent guide | `#12314A` | `#184264` | 1.25:1 against the sidebar; floor is 1.6:1 |
-| Active indent guide | `#2A5177` | `#26669B` | keep a clear step above the raised inactive guide |
-| Find match background | `#1B4B6B` | `#163C56` | keyword purple sat at 3.85:1 on it |
-| Other find matches | `#153A54` | `#102C40` | kept one tonal step below the primary match |
-| Muted text on chrome | `#5F7E97` | `#618099` | inactive tab labels were 3.49:1 against the title bar |
+```
+theme/palette.json          the one place colors are defined
+        |  scripts/build-theme.js
+        v
+theme/VioletHour.json       complete VS Code theme JSON (561 keys, all explicit)
+        |  scripts/contrast-check.js   <- verification gate, build stops on failure
+        |  ThemeConverter -> scripts/finalize-pkgdef.js
+        v
+build/VioletHour.pkgdef
+        |  MSBuild vsix/VioletHour.csproj
+        v
+VioletHour.vsix
+```
 
-Two colors were also **split** because one value could not serve both jobs:
+### Why the theme JSON is generated, not hand-written
 
-- **Scrollbar / minimap sliders** got their own ramp (`#20425D` → `#2C597D` → `#3973A2`). They had
-  reused `inactiveSelBg`, and lifting that to the 1.6:1 visibility floor would have made the
-  *inactive* selection lighter than the *active* one — inverting the selection hierarchy.
-- **Muted foreground** split into `fg.muted` (on the editor and panels) and `fg.mutedOnChrome` (on
-  the lighter title bar and tab strip), because a single tone could not clear 3.5:1 on both.
+ThemeConverter expects a **fully expanded** theme: every workbench color key present and explicitly
+set. An omitted key does not fall back sensibly — it converts to a bad value, which is how converted
+themes end up with black-on-black tool windows.
 
-The saturation cap is the change you will notice most: it is what keeps the theme "muted-vivid" and
-off the neon end, exactly as the brief asked, but it does pull the blues and oranges a step back
-from Night Owl's originals.
+`scripts/baseline-keys.json` is ThemeConverter's own `Complete_Dark.json` fixture — the converter's
+reference for what "complete" means. `build-theme.js` assigns a palette color to every key in it and
+**fails the build** if even one is left unassigned. That is why the build prints
+`561 required, 0 extra`.
+
+### Building it yourself
+
+```powershell
+npm run build      # theme JSON + contrast report
+npm run vsix       # full chain through to VioletHour.vsix  (needs .NET SDK + VS 2022)
+npm run vscode     # package + install the VS Code extension
+```
+
+`scripts/build-vsix.ps1` clones and builds ThemeConverter into `.tools/` on first run and caches it.
+For a fast iteration loop, ThemeConverter's `-t` flag patches a VS install in place and launches it:
+
+```powershell
+.\scripts\build-vsix.ps1 -LaunchVS "C:\Program Files\Microsoft Visual Studio\2022\Community"
+```
+
+Releases are cut by `.github/workflows/release.yml` on a `v*` tag. It runs on `windows-latest`,
+which ships VS 2022 Enterprise **including the VSSDK build targets**, so the `.vsix` is packaged by
+the real Microsoft toolchain and nobody needs VS 2022 locally to publish:
+
+```bash
+git tag v2.0.1 && git push origin v2.0.1
+```
+
+### ThemeConverter quirks the build works around
+
+Three undocumented behaviours, all handled rather than left to be rediscovered:
+
+1. **The display name comes from the input FILENAME**, not the JSON's `name` field
+   (`Converter.cs`: `Path.GetFileNameWithoutExtension`). The build stages a copy named
+   `Violet Hour.json` so it reads correctly under Tools → Theme.
+2. **The theme GUID is `Guid.NewGuid()` on every run** (`Converter.cs:116`). Left alone, every
+   rebuild registers as a brand-new theme — duplicates piling up under Tools → Theme and the user's
+   selection resetting on each update. `finalize-pkgdef.js` pins it, which also makes builds
+   byte-identical.
+3. **It resolves its mapping files against the working directory**, not the assembly location, so it
+   must be invoked from its own output folder or it cannot find `TokenMappings.json`.
+
+**One palette entry does nothing in VS:** `state.cursor`. ThemeConverter maps
+`editorCursor.foreground` to an empty VS token list, so the caret color is dropped — in VS the caret
+follows Plain Text. It is correct and used in VS Code.
+
+### Without a VSIX
+
+```powershell
+copy build\VioletHour.pkgdef "C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Platform\"
+& "C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\devenv.exe" /updateConfiguration
+```
+
+(Administrator — it writes under `Program Files`.)
+
+---
+
+## Checking the rendering
+
+`samples/` has three files that between them exercise every token role:
+
+| File | What to look for |
+|---|---|
+| `sample.tsx` | italic comments, keywords and parameters; JSX intrinsic tags (aqua) vs component tags (gold); template-literal `${}`; regex |
+| `sample.css` | selector / property / value / unit each a different color |
+| `package.json` | keys distinct from string values; numbers and booleans distinct again |
+
+Nothing should render as unstyled default-foreground text.
 
 ---
 
 ## Layout
 
 ```
-deep-azure/
+violet-hour/
   theme/
     palette.json          the one place colors are defined
-    DeepAzure.json        generated - complete VS Code theme JSON
+    VioletHour.json       generated - complete VS Code theme JSON
   scripts/
-    build-theme.js        palette -> DeepAzure.json (fails if any key is unassigned)
+    build-theme.js        palette -> VioletHour.json (fails if any key is unassigned)
     contrast-check.js     verification + printed report
-    finalize-pkgdef.js    pins the theme GUID + verifies the display name
+    finalize-pkgdef.js    pins the theme GUID, verifies the display name
+    build-vsix.ps1        full chain: theme -> check -> pkgdef -> vsix
     install-vscode.ps1    packages + installs the VS Code extension
     make-vsix-zip.ps1     OPC-correct zip packer shared by script + CI
-    make-icon.js          renders vsix/icon.png from the palette
-    build-vsix.ps1        full chain: theme -> check -> pkgdef -> vsix
+    make-icon.js          renders the icon from the palette
     baseline-keys.json    ThemeConverter's Complete_Dark.json - the required key set
-  build/
-    DeepAzure.pkgdef      generated - 145,689 bytes, 59 color categories
-  vscode/                 VS Code extension manifest, icon, generated .vsix
-  .github/workflows/      CI: build, verify, publish releases
+  vsix/                   VS 2022 extension project
+  vscode/                 VS Code extension manifest + icon
   samples/                .tsx / .css / package.json for eyeballing the result
-  vsix/                   VSIX project + built DeepAzure.vsix
-  LICENSE.txt
-  README.md
+  .github/workflows/      CI: build, verify, publish releases
 ```
 
-`theme/DeepAzure.json` is generated. Edit `palette.json` and rebuild rather than editing it directly.
+`theme/VioletHour.json` is generated. Edit `palette.json` and rebuild rather than editing it
+directly.
 
 ---
 
 ## Uninstall
 
-**If installed from the VSIX** — Extensions → Manage Extensions → Installed → Deep Azure →
-Uninstall, then restart VS.
+**VS 2022, from the VSIX** — Extensions → Manage Extensions → Installed → Violet Hour → Uninstall,
+then restart. Switch to another theme under Tools → Theme first, or VS starts on a theme that no
+longer exists.
 
-**If the pkgdef was copied in by hand** — delete it and refresh the configuration:
+**VS 2022, manual pkgdef** — delete it and refresh:
 
 ```powershell
-del "C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Platform\DeepAzure.pkgdef"
+del "C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Platform\VioletHour.pkgdef"
 & "C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\devenv.exe" /updateConfiguration
 ```
 
-Adjust `Community` to `Professional` or `Enterprise` to match your install. Switch to another theme
-under **Tools → Theme** first, or VS will start on a theme that no longer exists.
+**VS Code** — `npm run vscode:uninstall`, or uninstall from the Extensions pane.
+
+Adjust `Community` to `Professional` or `Enterprise` to match your install.
 
 ---
 
-## Credit
+## License
 
-Deep Azure is a derivative of **[Night Owl](https://github.com/sdras/night-owl-vscode-theme)** by
-**Sarah Drasner**, used under the MIT License. The navy field, the warm/cool split, and many of the
-syntax hues originate there. Full license text in `LICENSE.txt`.
+MIT — see `LICENSE.txt`.
+
+The palette is original work. The only third-party file in this repository is
+`scripts/baseline-keys.json`, a verbatim copy of `Complete_Dark.json` from Microsoft's
+[theme-converter-for-vs](https://github.com/microsoft/theme-converter-for-vs) (MIT), used purely as
+the authoritative list of color keys a complete theme must define. Its license is reproduced in
+`LICENSE.txt`. ThemeConverter itself is a build-time tool, fetched during the build and not
+redistributed.

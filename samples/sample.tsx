@@ -1,4 +1,4 @@
-// Deep Azure syntax sample - comments are italic and recessive (#637777)
+// Violet Hour syntax sample - comments are italic and recessive (#806795)
 /**
  * Block doc comment. Exercises every token role the palette defines,
  * so you can eyeball the theme instead of trusting the contrast table.
@@ -6,13 +6,13 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import type { ReactNode } from 'react';
 
-const MAX_RETRIES = 3;              // number / constant  -> peach
+const MAX_RETRIES = 3;              // number / constant  -> warm coral
 const ENDPOINT = 'https://api.example.com/v1/telemetry';
-const SLUG_RE = /^[a-z0-9]+(?:-[a-z0-9]+)*$/i;   // regex -> muted blue
+const SLUG_RE = /^[a-z0-9]+(?:-[a-z0-9]+)*$/i;   // regex -> green
 
 export type Status = 'idle' | 'loading' | 'ready' | 'failed';
 
-export interface PanelProps {           // interface -> tan
+export interface PanelProps {           // interface -> cool aqua
   title: string;
   count?: number;
   retries: number;
@@ -27,7 +27,7 @@ function classify(status: Status): string {   // parameter -> italic
     case 'failed':
       return 'error';
     default:
-      return `pending-${status}`;      // template punctuation -> teal
+      return `pending-${status}`;      // template punctuation -> mint
   }
 }
 

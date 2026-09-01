@@ -2,8 +2,8 @@
 node_modules/
 vsix/bin/
 vsix/obj/
-vsix/DeepAzure.pkgdef
+vsix/VioletHour.pkgdef
 build/*.pkgdef
-vscode/deep-azure-*.vsix
+vscode/violet-hour-*.vsix
 dist/
 stage/

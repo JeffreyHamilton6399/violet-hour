@@ -1,8 +1,8 @@
 {
-  "name": "deep-azure",
-  "version": "1.0.1",
+  "name": "violet-hour",
+  "version": "2.0.0",
   "private": true,
-  "description": "Deep Azure - a deep navy color theme for Visual Studio 2022, tuned for JS/TS/JSX/CSS. Derived from Night Owl by Sarah Drasner.",
+  "description": "Violet Hour - a deep violet color theme for Visual Studio 2022 and VS Code, tuned for JS/TS/JSX/CSS. Original palette, contrast-verified.",
   "license": "MIT",
   "scripts": {
     "build": "node scripts/build-theme.js && node scripts/contrast-check.js",

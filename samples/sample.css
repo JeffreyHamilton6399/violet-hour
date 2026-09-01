@@ -1,8 +1,8 @@
-/* Deep Azure - CSS sample: selector / property / value / unit each get a distinct color */
+/* Violet Hour - CSS sample: selector / property / value / unit each get a distinct color */
 :root {
-  --bg: #011627;
-  --fg: #d6deeb;
-  --accent: #90aff1;
+  --bg: #16111f;
+  --fg: #dccfe7;
+  --accent: #b694ef;
   --radius: 6px;
   --gap: 1.25rem;
 }
@@ -12,7 +12,7 @@
   background-color: var(--bg);
   color: var(--fg);
   padding: var(--gap) 2rem;
-  border: 1px solid rgba(25, 74, 116, 0.9);
+  border: 1px solid rgba(93, 63, 129, 0.9);
   border-radius: var(--radius);
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
