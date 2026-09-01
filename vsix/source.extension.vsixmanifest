@@ -3,9 +3,10 @@
                  xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011"
                  xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
   <Metadata>
-    <!-- Change Publisher to your own name before sharing this VSIX. -->
+    <!-- Publisher is the display name shown in Extensions > Manage Extensions.
+         Change it if you want your own name on it. -->
     <Identity Id="DeepAzure.444165CB-A356-4E44-9E35-4E5663241067"
-              Version="1.0.0"
+              Version="1.0.1"
               Language="en-US"
               Publisher="Deep Azure" />
     <DisplayName>Deep Azure</DisplayName>
@@ -16,7 +17,16 @@
     <Tags>theme, color theme, dark, navy, night owl, javascript, typescript</Tags>
   </Metadata>
   <Installation>
+    <!-- All three editions are listed explicitly. Targeting only Community
+         relies on VS treating higher SKUs as a superset; naming them removes
+         any chance of the installer refusing on Pro or Enterprise. -->
     <InstallationTarget Id="Microsoft.VisualStudio.Community" Version="[17.0,18.0)">
+      <ProductArchitecture>amd64</ProductArchitecture>
+    </InstallationTarget>
+    <InstallationTarget Id="Microsoft.VisualStudio.Pro" Version="[17.0,18.0)">
+      <ProductArchitecture>amd64</ProductArchitecture>
+    </InstallationTarget>
+    <InstallationTarget Id="Microsoft.VisualStudio.Enterprise" Version="[17.0,18.0)">
       <ProductArchitecture>amd64</ProductArchitecture>
     </InstallationTarget>
   </Installation>

@@ -4,6 +4,6 @@ vsix/bin/
 vsix/obj/
 vsix/DeepAzure.pkgdef
 build/*.pkgdef
-vscode/deep-azure-1.0.0.vsix
+vscode/deep-azure-*.vsix
 dist/
 stage/

@@ -1,6 +1,6 @@
 {
   "name": "deep-azure",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "private": true,
   "description": "Deep Azure - a deep navy color theme for Visual Studio 2022, tuned for JS/TS/JSX/CSS. Derived from Night Owl by Sarah Drasner.",
   "license": "MIT",

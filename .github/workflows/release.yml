@@ -93,7 +93,7 @@ jobs:
           Copy-Item -LiteralPath 'vscode/[Content_Types].xml' -Destination "$stage/[Content_Types].xml"
           # Same packer as the local script, so CI and local output match and the
           # entry names are guaranteed to use forward slashes.
-          ./scripts/make-vsix-zip.ps1 -Source $stage -Destination "$PWD/deep-azure-vscode-1.0.0.vsix"
+          ./scripts/make-vsix-zip.ps1 -Source $stage -Destination "$PWD/deep-azure-vscode-1.0.1.vsix"
 
       - name: Collect artifacts
         shell: pwsh
@@ -101,7 +101,7 @@ jobs:
           New-Item -ItemType Directory -Force -Path dist | Out-Null
           Get-ChildItem vsix/bin/Release -Filter *.vsix -Recurse |
             Copy-Item -Destination dist/DeepAzure.vsix
-          Copy-Item deep-azure-vscode-1.0.0.vsix dist/DeepAzure-VSCode.vsix
+          Copy-Item deep-azure-vscode-1.0.1.vsix dist/DeepAzure-VSCode.vsix
           Copy-Item build/DeepAzure.pkgdef       dist/DeepAzure.pkgdef
           Get-ChildItem dist | Format-Table Name, Length
 
