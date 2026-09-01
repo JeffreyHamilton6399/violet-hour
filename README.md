@@ -14,8 +14,10 @@ build refuses to ship a palette that violates them.
 
 ![Violet Hour](https://raw.githubusercontent.com/JeffreyHamilton6399/violet-hour/main/preview.png)
 
-*Regenerate with `npm run preview`. It renders the mock above straight from `palette.json`, so it
-can never drift from what ships.*
+![HTML and CSS](https://raw.githubusercontent.com/JeffreyHamilton6399/violet-hour/main/preview-markup.png)
+
+*Regenerate with `npm run preview` (and `npm run preview:markup`). Both render straight from
+`palette.json` through GDI+ with a real monospace face, so they cannot drift from what ships.*
 
 ---
 
@@ -112,6 +114,11 @@ two of its members blur together:
 | Attribute name | `#8FD5A1` | 136 | same hue as regex, split by lightness |
 | Parameter | `#DBC8BC` | 22 | italic — a warm blush neutral, tied to the rose family |
 | Punctuation | `#A295BE` | 259 | |
+
+In CSS the four most frequent tokens are pulled deliberately far apart — selector `#DCC16A` (46°),
+property `#7DB5E1` (206°), value keyword `#5ECA9B` (156°), number/unit `#E99177` (14°). Unquoted
+value keywords (`solid`, `ease-in-out`) are constants, not strings, so they do **not** share the
+string amber; a quoted string in CSS still does.
 
 **State** — `#B694EF` accent, `#D377EB` caret, `#E25A68` error, `#DEA45E` warning, `#60CD76` added,
 `#4A9BDA` modified. The four status colors were solved *together*: red and green collapse toward the

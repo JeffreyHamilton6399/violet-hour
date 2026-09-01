@@ -7,7 +7,8 @@
       "identity": "262 lavender -- accent, focus, links, function names",
       "grammar": "332 rose -- keywords, storage, decorators",
       "lowSun": "14 coral (numbers), 33 orange (warnings), 40 amber (strings), 46 gold (markup tags)",
-      "coolSky": "136 green (regex, attributes), 156 mint (template punctuation), 172 aqua (types AND intrinsic tags - deliberately one colour, an intrinsic element is a type-like thing), 206 sky (properties, git-modified)"
+      "coolSky": "136 green (regex, attributes), 156 mint (template punctuation), 172 aqua (types AND intrinsic tags - deliberately one colour, an intrinsic element is a type-like thing), 206 sky (properties, git-modified)",
+      "cssPlan": "selector 46 gold, property 206 sky, value-keyword 156 mint, unit/number 14 coral - four well-separated hues, so no two frequent CSS tokens blur"
     }
   },
   "neutral": {
@@ -63,7 +64,7 @@
     "attribute": "#8FD5A1",
     "cssSelector": "#DCC16A",
     "cssProperty": "#7DB5E1",
-    "cssValue": "#DEB052",
+    "cssValue": "#5ECA9B",
     "cssUnit": "#E99177",
     "invalid": "#E77883",
     "deprecated": "#A295BE"

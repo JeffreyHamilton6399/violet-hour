@@ -93,7 +93,7 @@ jobs:
           Copy-Item -LiteralPath 'vscode/[Content_Types].xml' -Destination "$stage/[Content_Types].xml"
           # Same packer as the local script, so CI and local output match and the
           # entry names are guaranteed to use forward slashes.
-          ./scripts/make-vsix-zip.ps1 -Source $stage -Destination "$PWD/violet-hour-vscode-2.1.0.vsix"
+          ./scripts/make-vsix-zip.ps1 -Source $stage -Destination "$PWD/violet-hour-vscode-2.2.0.vsix"
 
       # Catches manifest regressions (bad publisher, missing icon, broken engines)
       # on every push, rather than at publish time when a tag is already cut.
@@ -123,7 +123,7 @@ jobs:
           New-Item -ItemType Directory -Force -Path dist | Out-Null
           Get-ChildItem vsix/bin/Release -Filter *.vsix -Recurse |
             Copy-Item -Destination dist/VioletHour.vsix
-          Copy-Item violet-hour-vscode-2.1.0.vsix dist/VioletHour-VSCode.vsix
+          Copy-Item violet-hour-vscode-2.2.0.vsix dist/VioletHour-VSCode.vsix
           Copy-Item build/VioletHour.pkgdef       dist/VioletHour.pkgdef
           Copy-Item "$env:RUNNER_TEMP/VioletHour-Marketplace.vsix" dist/VioletHour-Marketplace.vsix
           Get-ChildItem dist | Format-Table Name, Length

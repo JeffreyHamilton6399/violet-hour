@@ -17,14 +17,23 @@
     as the portable fallback.
 #>
 [CmdletBinding()]
-param([string]$Out)
+param(
+    [string]$Out,
+    # tsx    - TypeScript + JSX
+    # markup - HTML, CSS and JSON, where tags, attributes and strings collide
+    #          most densely and are easiest to get wrong
+    [ValidateSet('tsx', 'markup')][string]$Sample = 'tsx'
+)
 
 $ErrorActionPreference = 'Stop'
 Add-Type -AssemblyName System.Drawing
 
 # $PSScriptRoot is not populated inside a param default block, so resolve here.
 $Root = Split-Path -Parent $PSScriptRoot
-if (-not $Out) { $Out = Join-Path $Root 'preview.png' }
+if (-not $Out) {
+    $name = if ($Sample -eq 'tsx') { 'preview.png' } else { "preview-$Sample.png" }
+    $Out = Join-Path $Root $name
+}
 $P = Get-Content (Join-Path $Root 'theme/palette.json') -Raw | ConvertFrom-Json
 $N = $P.neutral; $F = $P.fg; $S = $P.state; $X = $P.syntax
 
@@ -130,6 +139,7 @@ $K = @{
   ty = $X.type; va = $X.variable; pa = $X.parameter; pr = $X.property; pu = $X.punctuation
   cm = $X.comment; re = $X.regex; ti = $X.tagIntrinsic; tc = $X.tagComponent
   at = $X.attribute; tp = $X.templatePunct; de = $X.decorator
+  cs = $X.cssSelector; cp = $X.cssProperty; cv = $X.cssValue; cu = $X.cssUnit
 }
 function S([string]$text, [string]$key = '', [bool]$italic = $false) {
   "$text$US$key$US$(if ($italic) { '1' } else { '' })"
@@ -162,6 +172,37 @@ $lines = @(
   @((S '  );' 'pu')),
   @((S '}' 'pu'))
 )
+
+
+$markup = @(
+  @((S '<!-- the violet hour -->' 'cm' $true)),
+  @((S '<' 'pu'), (S '!DOCTYPE' 'ti'), (S ' html' 'at'), (S '>' 'pu')),
+  @((S '<' 'pu'), (S 'html' 'ti'), (S ' lang' 'at'), (S '=' 'op'), (S '"en"' 'st'), (S '>' 'pu')),
+  @((S '  <' 'pu'), (S 'head' 'ti'), (S '>' 'pu')),
+  @((S '    <' 'pu'), (S 'meta' 'ti'), (S ' charset' 'at'), (S '=' 'op'), (S '"utf-8"' 'st'), (S ' />' 'pu')),
+  @((S '    <' 'pu'), (S 'link' 'ti'), (S ' rel' 'at'), (S '=' 'op'), (S '"stylesheet"' 'st'), (S ' href' 'at'), (S '=' 'op'), (S '"/theme.css"' 'st'), (S ' />' 'pu')),
+  @((S '    <' 'pu'), (S 'title' 'ti'), (S '>' 'pu'), (S 'Violet Hour' 'va'), (S '</' 'pu'), (S 'title' 'ti'), (S '>' 'pu')),
+  @((S '  </' 'pu'), (S 'head' 'ti'), (S '>' 'pu')),
+  @((S '  <' 'pu'), (S 'body' 'ti'), (S ' class' 'at'), (S '=' 'op'), (S '"panel panel--dark"' 'st'), (S ' data-theme' 'at'), (S '=' 'op'), (S '"violet"' 'st'), (S '>' 'pu')),
+  @((S '    <' 'pu'), (S 'button' 'ti'), (S ' type' 'at'), (S '=' 'op'), (S '"submit"' 'st'), (S ' disabled' 'at'), (S '>' 'pu'), (S 'Reload' 'va'), (S '</' 'pu'), (S 'button' 'ti'), (S '>' 'pu')),
+  @((S '  </' 'pu'), (S 'body' 'ti'), (S '>' 'pu')),
+  @((S '</' 'pu'), (S 'html' 'ti'), (S '>' 'pu')),
+  @(),
+  @((S '/* selector / property / value / unit must all differ */' 'cm' $true)),
+  @((S ':root' 'cs'), (S ' {' 'pu')),
+  @((S '  --bg' 'cp'), (S ': ' 'pu'), (S '#16111f' 'cu'), (S ';' 'pu')),
+  @((S '  --gap' 'cp'), (S ': ' 'pu'), (S '1.25' 'cu'), (S 'rem' 'cu'), (S ';' 'pu')),
+  @((S '}' 'pu')),
+  @((S '.panel' 'cs'), (S ', ' 'pu'), (S '.panel--compact' 'cs'), (S ':hover' 'cs'), (S ' {' 'pu')),
+  @((S '  background-color' 'cp'), (S ': ' 'pu'), (S 'var' 'cv'), (S '(' 'pu'), (S '--bg' 'cp'), (S ');' 'pu')),
+  @((S '  padding' 'cp'), (S ': ' 'pu'), (S '0' 'cu'), (S ' ' 'pu'), (S '2' 'cu'), (S 'rem' 'cu'), (S ';' 'pu')),
+  @((S '  content' 'cp'), (S ': ' 'pu'), (S '"->"' 'st'), (S ';' 'pu')),
+  @((S '  border' 'cp'), (S ': ' 'pu'), (S '1' 'cu'), (S 'px' 'cu'), (S ' ' 'pu'), (S 'solid' 'cv'), (S ' ' 'pu'), (S 'rgba' 'cv'), (S '(' 'pu'), (S '93, 63, 129, 0.9' 'cu'), (S ');' 'pu')),
+  @((S '  transition' 'cp'), (S ': ' 'pu'), (S 'background-color' 'cv'), (S ' ' 'pu'), (S '160' 'cu'), (S 'ms' 'cu'), (S ' ' 'pu'), (S 'ease-in-out' 'cv'), (S ';' 'pu')),
+  @((S '}' 'pu'))
+)
+
+if ($Sample -eq 'markup') { $lines = $markup }
 
 for ($i = 0; $i -lt $lines.Count; $i++) {
     $ln = $i + 1

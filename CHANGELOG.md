@@ -3,6 +3,19 @@
 All notable changes to Violet Hour are documented here.
 This project follows [Semantic Versioning](https://semver.org/).
 
+## [2.2.0] - 2026-09-01
+
+### Changed
+- **CSS value keywords moved off the string amber** to mint (`#5ECA9B`). Unquoted values
+  (`solid`, `ease-in-out`, `var`) are constants rather than strings, and as strings they sat
+  6° from the gold selector — the two most frequent tokens in a stylesheet were nearly the
+  same colour. CSS is now selector 46° / property 206° / value 156° / unit 14°. Quoted
+  strings in CSS still use the string amber, as they should.
+
+### Added
+- `npm run preview:markup` renders an HTML + CSS sample. The existing preview only covered
+  TSX, which is why the CSS collision went unnoticed.
+
 ## [2.1.0] - 2026-09-01
 
 ### Changed
