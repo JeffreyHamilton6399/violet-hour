@@ -12,6 +12,11 @@ Original work. No color is taken or adapted from another theme, and every value 
 against a contrast budget rather than picked by eye** — the solvers are in `scripts/`, and the
 build refuses to ship a palette that violates them.
 
+![Violet Hour](preview.png)
+
+*Regenerate with `npm run preview`. It renders the mock above straight from `palette.json`, so it
+can never drift from what ships.*
+
 ---
 
 ## Install
@@ -27,6 +32,44 @@ Grab the latest from the **[Releases](../../releases)** page:
 No toolchain, no build — same as any other theme you download.
 
 ---
+
+## Getting it into Extensions search
+
+Installing a `.vsix` puts the theme under **Installed** in the Extensions pane. It does **not** make
+it findable in **search** — search queries the VS Code Marketplace, so the extension has to be
+published there. That needs a Microsoft account and a token, so it is something only you can do:
+
+1. Sign in at <https://marketplace.visualstudio.com/manage> and **create a publisher**. The ID you
+   pick is permanent and becomes half of the extension's identity (`<publisher>.violet-hour`).
+2. If it is not `jeffreyhamilton`, change `publisher` in `vscode/package.json` to match. A mismatch
+   is the single most common cause of a rejected publish.
+3. In Azure DevOps, mint a Personal Access Token with **Marketplace → Manage** scope
+   (<https://dev.azure.com> → User settings → Personal access tokens). Set *Organization* to
+   **All accessible organizations**, or the token will not work.
+4. Add it to this repo as the secret **`VSCE_PAT`**
+   (Settings → Secrets and variables → Actions → New repository secret).
+5. Push a `v*` tag. The `publish-marketplace` job picks it up.
+
+The job is opt-in: with no `VSCE_PAT` it logs a notice and skips, so forks and pull requests never
+try to publish. It refuses outright if `publisher` is still `local`.
+
+To publish by hand instead:
+
+```bash
+npx @vscode/vsce login <your-publisher>
+npx @vscode/vsce publish
+```
+
+Run that from a **short, plain path**. `vsce` globs the working directory and silently finds zero
+files under long or unusual paths — it then reports the icon and LICENSE as missing, which looks
+like a manifest error but is not.
+
+**Visual Studio 2022 has a separate marketplace.** There is no equivalent CLI publish for the
+`.vsix` in this repo; upload it through the web UI at
+<https://marketplace.visualstudio.com/manage/publishers> under a Visual Studio publisher.
+
+Until any of that happens, the `.vsix` files on the [Releases](../../releases) page install exactly
+the same theme — they just are not searchable.
 
 ## The palette
 
@@ -65,13 +108,15 @@ carries literals, cool carries structure:
 | Regex | `#6BC683` | 136 | |
 | JSX intrinsic tag | `#4FCAC6` | 178 | |
 | JSX component tag | `#DCC16A` | 46 | |
-| Attribute name | `#A0C86C` | 86 | |
-| Parameter | `#D2C9BB` | 37 | italic |
+| Attribute name | `#8FD5A1` | 136 | same hue as regex, split by lightness |
+| Parameter | `#DBC8BC` | 22 | italic — a warm blush neutral, tied to the rose family |
 | Punctuation | `#A295BE` | 259 | |
 
-**State** — `#B694EF` accent, `#E25A68` error, `#D9B85E` warning, `#60CD76` added, `#85B941`
-modified. Those four were solved *together*: red and green collapse toward the same hue under
-deuteranopia, so they are separated by simulated lightness rather than by hue.
+**State** — `#B694EF` accent, `#D377EB` caret, `#E25A68` error, `#DEA45E` warning, `#60CD76` added,
+`#4A9BDA` modified. The four status colors were solved *together*: red and green collapse toward the
+same hue under deuteranopia, so they are separated by simulated lightness rather than by hue. Git
+"modified" is blue partly for that reason — blue survives deuteranopia, which lifts its separation
+from "added" from 1.14 to 1.48.
 
 ### Tweaking a color
 

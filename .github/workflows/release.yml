@@ -93,7 +93,7 @@ jobs:
           Copy-Item -LiteralPath 'vscode/[Content_Types].xml' -Destination "$stage/[Content_Types].xml"
           # Same packer as the local script, so CI and local output match and the
           # entry names are guaranteed to use forward slashes.
-          ./scripts/make-vsix-zip.ps1 -Source $stage -Destination "$PWD/violet-hour-vscode-2.0.0.vsix"
+          ./scripts/make-vsix-zip.ps1 -Source $stage -Destination "$PWD/violet-hour-vscode-2.0.1.vsix"
 
       - name: Collect artifacts
         shell: pwsh
@@ -101,7 +101,7 @@ jobs:
           New-Item -ItemType Directory -Force -Path dist | Out-Null
           Get-ChildItem vsix/bin/Release -Filter *.vsix -Recurse |
             Copy-Item -Destination dist/VioletHour.vsix
-          Copy-Item violet-hour-vscode-2.0.0.vsix dist/VioletHour-VSCode.vsix
+          Copy-Item violet-hour-vscode-2.0.1.vsix dist/VioletHour-VSCode.vsix
           Copy-Item build/VioletHour.pkgdef       dist/VioletHour.pkgdef
           Get-ChildItem dist | Format-Table Name, Length
 
@@ -132,3 +132,59 @@ jobs:
 
             Every color is solved against a contrast budget, not picked by eye.
             Contrast report: 113/113 assertions pass. Original palette, MIT licensed.
+
+  # ---------------------------------------------------------------------------
+  # Publishing to the VS Code Marketplace is what makes the theme findable in
+  # the Extensions pane's SEARCH. It is opt-in: the job is skipped entirely
+  # unless a VSCE_PAT secret exists, so forks and PRs never attempt it.
+  #
+  # To enable: create a publisher at https://marketplace.visualstudio.com/manage,
+  # mint an Azure DevOps PAT scoped to Marketplace > Manage, then add it as the
+  # repository secret VSCE_PAT. Never paste that token anywhere else.
+  publish-marketplace:
+    needs: build
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Check for a publish token
+        id: gate
+        env:
+          VSCE_PAT: ${{ secrets.VSCE_PAT }}
+        run: |
+          if [ -z "$VSCE_PAT" ]; then
+            echo "enabled=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::VSCE_PAT is not set - skipping Marketplace publish. The GitHub release still has the .vsix."
+          else
+            echo "enabled=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Build theme
+        if: steps.gate.outputs.enabled == 'true'
+        run: node scripts/build-theme.js && node scripts/contrast-check.js
+
+      - name: Stage and publish
+        if: steps.gate.outputs.enabled == 'true'
+        env:
+          VSCE_PAT: ${{ secrets.VSCE_PAT }}
+        run: |
+          publisher=$(node -p "require('./vscode/package.json').publisher")
+          if [ "$publisher" = "local" ]; then
+            echo "::error::vscode/package.json still has publisher \"local\". Set it to your Marketplace publisher ID before publishing."
+            exit 1
+          fi
+          echo "publishing as: $publisher"
+
+          # vsce packages the working directory, so stage a clean extension root.
+          # (It also needs a short, plain path - long paths break its globbing.)
+          stage="$RUNNER_TEMP/ext"
+          mkdir -p "$stage/themes"
+          cp vscode/package.json vscode/icon.png "$stage/"
+          cp LICENSE.txt README.md "$stage/"
+          cp theme/VioletHour.json "$stage/themes/"
+          cd "$stage"
+          npx --yes @vscode/vsce@latest publish --no-dependencies

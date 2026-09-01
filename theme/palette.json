@@ -6,8 +6,8 @@
       "neutrals": "261-272 violet, saturation eased from 0.34 down to 0.25 as surfaces lighten so chrome never turns lurid",
       "identity": "262 lavender -- accent, focus, links, function names",
       "grammar": "332 rose -- keywords, storage, decorators",
-      "lowSun": "14 coral (numbers), 40 amber (strings), 46 gold (types in markup)",
-      "coolSky": "172 aqua (types), 206 blue (properties), 136 green (regex)"
+      "lowSun": "14 coral (numbers), 33 orange (warnings), 40 amber (strings), 46 gold (markup tags)",
+      "coolSky": "172 aqua (types), 206 blue (properties, git-modified), 136 green (regex, attributes) - one green hue at two lightnesses, not four scattered greens"
     }
   },
   "neutral": {
@@ -33,15 +33,15 @@
   },
   "state": {
     "accent": "#B694EF",
-    "cursor": "#E868E8",
+    "cursor": "#D377EB",
     "findMatchBg": "#36254B",
     "findOtherBg": "#2A1D39",
     "error": "#E25A68",
-    "warning": "#D9B85E",
+    "warning": "#DEA45E",
     "info": "#7DB5E1",
     "gitAdded": "#60CD76",
     "gitRemoved": "#E25A68",
-    "gitModified": "#85B941"
+    "gitModified": "#4A9BDA"
   },
   "syntax": {
     "comment": "#806795",
@@ -53,14 +53,14 @@
     "function": "#B694EF",
     "type": "#5DD1C2",
     "variable": "#DCCFE7",
-    "parameter": "#D2C9BB",
+    "parameter": "#DBC8BC",
     "property": "#7DB5E1",
     "punctuation": "#A295BE",
     "decorator": "#E582B1",
     "regex": "#6BC683",
     "tagIntrinsic": "#4FCAC6",
     "tagComponent": "#DCC16A",
-    "attribute": "#A0C86C",
+    "attribute": "#8FD5A1",
     "cssSelector": "#DCC16A",
     "cssProperty": "#7DB5E1",
     "cssValue": "#DEB052",

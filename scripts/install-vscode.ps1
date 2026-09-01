@@ -38,7 +38,7 @@ param(
 $ErrorActionPreference = 'Stop'
 $Root      = Split-Path -Parent $PSScriptRoot
 $ThemeJson = Join-Path $Root 'theme\VioletHour.json'
-$ExtId     = 'local.violet-hour'
+$ExtId     = 'jeffreyhamilton.violet-hour'
 
 # ------------------------------------------------------------- locate code CLI
 function Find-CodeCli {
@@ -110,7 +110,7 @@ Copy-Item -LiteralPath (Join-Path $Root 'vscode\[Content_Types].xml') `
           -Destination (Join-Path $Stage '[Content_Types].xml') -Force
 
 # ------------------------------------------------------------------- zip it up
-$Vsix = Join-Path $Root 'vscode\violet-hour-2.0.0.vsix'
+$Vsix = Join-Path $Root 'vscode\violet-hour-2.0.1.vsix'
 & (Join-Path $PSScriptRoot 'make-vsix-zip.ps1') -Source $Stage -Destination $Vsix
 
 Remove-Item $Stage -Recurse -Force -ErrorAction SilentlyContinue
